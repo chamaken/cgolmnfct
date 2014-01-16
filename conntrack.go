@@ -33,9 +33,10 @@ func ConntrackNew() (*Conntrack, error) {
 	ret, err := C.nfct_new()
 	return (*Conntrack)(ret), err
 }
+func NewConntrack() (*Conntrack, error) { return ConntrackNew() }
 
 /**
- * nf_conntrack_destroy - release a conntrack object
+ * nfct_destroy - release a conntrack object
  *
  * void nfct_destroy(struct nf_conntrack *ct)
  */
@@ -415,6 +416,7 @@ func FilterCreate() (*Filter, error) {
 	ret, err := C.nfct_filter_create()
 	return (*Filter)(ret), err
 }
+func NewFilter() (*Filter, error) { return FilterCreate() }
 
 /**
  * nfct_filter_destroy - destroy a filter
@@ -492,6 +494,7 @@ func FilterDumpCreate() (*FilterDump, error) {
 	ret, err := C.nfct_filter_dump_create()
 	return (*FilterDump)(ret), err
 }
+func NewFilterDump() (*FilterDump, error) { return FilterDumpCreate() }
 
 /**
  * nfct_filter_dump_destroy - destroy a dump filter
@@ -569,6 +572,7 @@ func LabelmapNew(mapfile string) (*Labelmap, error) {
 	ret, err := C.nfct_labelmap_new(cstr)
 	return (*Labelmap)(ret), err
 }
+func NewLabelmap(mapfile string) (*Labelmap, error) { return LabelmapNew(mapfile) }
 
 /**
  * nfct_labelmap_destroy - destroy nfct_labelmap object
@@ -591,6 +595,7 @@ func BitmaskNew(max uint) (*Bitmask, error) {
 	ret, err := C.nfct_bitmask_new(C.uint(max))
 	return (*Bitmask)(ret), err
 }
+func NewBitmask(max uint) (*Bitmask, error) { return BitmaskNew(max) }
 
 /**
  * nfct_bitmask_clone - duplicate a bitmask object
