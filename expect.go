@@ -2,6 +2,7 @@ package cgolmnfct
 
 import (
 	"reflect"
+	"syscall"
 	"unsafe"
 	mnl "cgolmnl"
 )
@@ -68,15 +69,19 @@ func ExpectCmp(exp1, exp2 *Expect, flags int) int {
  *		       const enum nf_expect_attr type, 
  *		       const void *value)
  */
-func ExpectSetAttr(exp *Expect, attr_type ExpectAttr, value unsafe.Pointer) {
+func ExpectSetAttr(exp *Expect, attr_type ExpectAttr, value unsafe.Pointer) error {
+	if attr_type >= ATTR_EXP_MAX {
+		return syscall.EINVAL
+	}
 	C.nfexp_set_attr((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), value)
+	return nil
 }
-func ExpectSetAttrPtr(exp *Expect, attr_type ExpectAttr, value interface{}) {
+func ExpectSetAttrPtr(exp *Expect, attr_type ExpectAttr, value interface{}) error {
 	v := reflect.ValueOf(value)
 	if v.Kind() != reflect.Ptr {
 		panic("pointer required for value")
 	}
-	ExpectSetAttr(exp, attr_type, unsafe.Pointer(v.Pointer()))
+	return ExpectSetAttr(exp, attr_type, unsafe.Pointer(v.Pointer()))
 }
 
 /**
@@ -86,8 +91,12 @@ func ExpectSetAttrPtr(exp *Expect, attr_type ExpectAttr, value interface{}) {
  *			  const enum nf_expect_attr type, 
  *		          u_int8_t value)
  */
-func ExpectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) {
+func ExpectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) error {
+	if attr_type >= ATTR_EXP_MAX {
+		return syscall.EINVAL
+	}
 	C.nfexp_set_attr_u8((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int8_t)(value))
+	return nil
 }
 
 /**
@@ -97,8 +106,12 @@ func ExpectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) {
  *			   const enum nf_expect_attr type, 
  *			   u_int16_t value)
  */
-func ExpectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) {
+func ExpectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) error {
+	if attr_type >= ATTR_EXP_MAX {
+		return syscall.EINVAL
+	}
 	C.nfexp_set_attr_u16((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int16_t)(value))
+	return nil
 }
 
 /**
@@ -108,8 +121,12 @@ func ExpectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) {
  *			   const enum nf_expect_attr type, 
  *			   u_int32_t value)
  */
-func ExpectSetAttrU32(exp *Expect, attr_type ExpectAttr, value uint32) {
+func ExpectSetAttrU32(exp *Expect, attr_type ExpectAttr, value uint32) error {
+	if attr_type >= ATTR_EXP_MAX {
+		return syscall.EINVAL
+	}
 	C.nfexp_set_attr_u32((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int32_t)(value))
+	return nil
 }
 
 /**
@@ -162,9 +179,9 @@ func ExpectGetAttrU32(exp *Expect, attr_type ExpectAttr) (uint32, error) {
  * int nfexp_attr_is_set(const struct nf_expect *exp,
  *		         const enum nf_expect_attr type)
  */
-func ExpectAttrIsSet(exp *Expect, attr_type ExpectAttr) (int, error) {
+func ExpectAttrIsSet(exp *Expect, attr_type ExpectAttr) (bool, error) {
 	ret, err := C.nfexp_attr_is_set((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type))
-	return int(ret), err
+	return ret > 0, err
 }
 
 /**
