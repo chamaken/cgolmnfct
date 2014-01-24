@@ -168,16 +168,12 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 	orig_bytes, _ = ct.AttrU64(nfct.ATTR_ORIG_COUNTER_BYTES)
 	repl_bytes, _ = ct.AttrU64(nfct.ATTR_REPL_COUNTER_BYTES)
 
-	if (orig_packets + repl_packets == 0) {
-		// fmt.Fprintf(os.Stderr, "found 0 packets from %s\n", t)
-		return mnl.MNL_CB_OK, 0
-	}
-
 	t, err := make_tuple(ct)
 	if err != nil {
 		// return mnl.MNL_CB_ERROR, err.(syscall.Errno)
 		return mnl.MNL_CB_OK, 0
 	}
+
 	counter := nstats[*t]
 	if counter != nil {
 		counter.Pkts = counter.Pkts + orig_packets + repl_packets
@@ -225,16 +221,15 @@ func handle(nl *mnl.Socket) int {
 
 func show_nstats() {
 	for k, v := range nstats {
+		if v.Deleting {
+			delete(nstats, k)
+		}
 		if v.Pkts == 0 {
 			continue
 		}
 		fmt.Printf("%s\t(%d, %d)\n", k, v.Pkts, v.Bytes)
-		if v.Deleting {
-			delete(nstats, k)
-		} else {
-			v.Pkts = 0
-			v.Bytes = 0
-		}
+		v.Pkts = 0
+		v.Bytes = 0
 	}
 }
 
