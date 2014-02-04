@@ -56,6 +56,7 @@ type Tuple struct {
 	L4proto, L3proto	uint8
 	Port			uint16 // TYPE in ICMP - u8
 }
+
 func (t Tuple) String() string {
 	var l4proto string
 	switch t.L4proto {
@@ -158,15 +159,10 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 	defer ct.Destroy()
 
 	// make_counter
-	var orig_packets, repl_packets, orig_bytes, repl_bytes uint64
-	// if orig_packets, err = ct.AttrU64(nfct.ATTR_ORIG_COUNTER_PACKETS); err != nil {
-	// if repl_packets, err = ct.AttrU64(nfct.ATTR_REPL_COUNTER_PACKETS); err != nil {
-	// if orig_bytes, err = ct.AttrU64(nfct.ATTR_ORIG_COUNTER_BYTES); err != nil {
-	// if repl_bytes, err = ct.AttrU64(nfct.ATTR_REPL_COUNTER_BYTES); err != nil {
-	orig_packets, _ = ct.AttrU64(nfct.ATTR_ORIG_COUNTER_PACKETS)
-	repl_packets, _ = ct.AttrU64(nfct.ATTR_REPL_COUNTER_PACKETS)
-	orig_bytes, _ = ct.AttrU64(nfct.ATTR_ORIG_COUNTER_BYTES)
-	repl_bytes, _ = ct.AttrU64(nfct.ATTR_REPL_COUNTER_BYTES)
+	orig_packets, _ := ct.AttrU64(nfct.ATTR_ORIG_COUNTER_PACKETS)
+	repl_packets, _ := ct.AttrU64(nfct.ATTR_REPL_COUNTER_PACKETS)
+	orig_bytes, _ := ct.AttrU64(nfct.ATTR_ORIG_COUNTER_BYTES)
+	repl_bytes, _ := ct.AttrU64(nfct.ATTR_REPL_COUNTER_BYTES)
 
 	t, err := make_tuple(ct)
 	if err != nil {
@@ -175,6 +171,11 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 	}
 
 	counter := nstats[*t]
+	// NF_NETLINK_CONNTRACK_DESTROY / NFCT_T_DESTROY
+	if nlh.Type & 0xFF == C.IPCTNL_MSG_CT_DELETE {
+		counter.Deleting = true
+	}
+	
 	if counter != nil {
 		counter.Pkts = counter.Pkts + orig_packets + repl_packets
 		counter.Bytes = counter.Bytes + orig_bytes + repl_bytes
@@ -183,11 +184,6 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 		nstats[*t] = counter
 	}
 
-	// NF_NETLINK_CONNTRACK_DESTROY / NFCT_T_DESTROY
-	if nlh.Type & 0xFF == C.IPCTNL_MSG_CT_DELETE {
-		counter.Deleting = true
-	}
-	
 	return mnl.MNL_CB_OK, 0
 }
 
