@@ -60,12 +60,15 @@ func ConntrackClone(ct *Conntrack) (*Conntrack, error) {
  *
  * nfct_setobjopt(struct nf_conntrack *ct, unsigned int option)
  */
-func ConntrackSetobjopt(ct *Conntrack, option uint) (int, error) {
+func ConntrackSetobjopt(ct *Conntrack, option uint) error {
+	if option > NFCT_SOPT_MAX {
+		return syscall.EINVAL
+	}
 	ret, err := C.nfct_setobjopt((*C.struct_nf_conntrack)(ct), C.uint(option))
 	if ret == -1 {
-		return -1, err
+		return err
 	}
-	return 0, nil
+	return nil
 }
 
 /**
@@ -74,11 +77,14 @@ func ConntrackSetobjopt(ct *Conntrack, option uint) (int, error) {
  * int nfct_getobjopt(const struct nf_conntrack *ct, unsigned int option)
  */
 func ConntrackGetobjopt(ct *Conntrack, option uint) (int, error) {
+	if option > NFCT_GOPT_MAX {
+		return -1, syscall.EINVAL
+	}
 	ret, err := C.nfct_getobjopt((*C.struct_nf_conntrack)(ct), C.uint(option))
 	if ret == -1 {
 		return -1, err
 	}
-	return 0, nil
+	return int(ret), nil
 }
 
 // NO -  LibrarySetup Library setup
@@ -117,7 +123,7 @@ func ConntrackSetAttrLPtr(ct *Conntrack, attr_type ConntrackAttr, value interfac
  * nfct_set_attr - set the value of a certain conntrack attribute
  *
  * void nfct_set_attr(struct nf_conntrack *ct,
- *		      const enum nf_conntrack_attr type, 
+ *		      const enum nf_conntrack_attr type,
  *		      const void *value)
  */
 func ConntrackSetAttr(ct *Conntrack, attr_type ConntrackAttr, value unsafe.Pointer) error {
@@ -143,7 +149,7 @@ func ConntrackSetAttrPtr(ct *Conntrack, attr_type ConntrackAttr, value interface
  * nfct_set_attr_u8 - set the value of a certain conntrack attribute
  *
  * void nfct_set_attr_u8(struct nf_conntrack *ct,
- *		         const enum nf_conntrack_attr type, 
+ *		         const enum nf_conntrack_attr type,
  *		         u_int8_t value)
  */
 func ConntrackSetAttrU8(ct *Conntrack, attr_type ConntrackAttr, value uint8) error {
@@ -157,9 +163,9 @@ func ConntrackSetAttrU8(ct *Conntrack, attr_type ConntrackAttr, value uint8) err
 /**
  * nfct_set_attr_u16 - set the value of a certain conntrack attribute
  *
- * 
+ *
  * void nfct_set_attr_u16(struct nf_conntrack *ct,
- *		          const enum nf_conntrack_attr type, 
+ *		          const enum nf_conntrack_attr type,
  *		          u_int16_t value)
  */
 func ConntrackSetAttrU16(ct *Conntrack, attr_type ConntrackAttr, value uint16) error {
@@ -174,7 +180,7 @@ func ConntrackSetAttrU16(ct *Conntrack, attr_type ConntrackAttr, value uint16) e
  * nfct_set_attr_u32 - set the value of a certain conntrack attribute
  *
  * void nfct_set_attr_u32(struct nf_conntrack *ct,
- *		          const enum nf_conntrack_attr type, 
+ *		          const enum nf_conntrack_attr type,
  *		          u_int32_t value)
  */
 func ConntrackSetAttrU32(ct *Conntrack, attr_type ConntrackAttr, value uint32) error {
@@ -189,7 +195,7 @@ func ConntrackSetAttrU32(ct *Conntrack, attr_type ConntrackAttr, value uint32) e
  * nfct_set_attr_u64 - set the value of a certain conntrack attribute
  *
  * void nfct_set_attr_u64(struct nf_conntrack *ct,
-		          const enum nf_conntrack_attr type, 
+		          const enum nf_conntrack_attr type,
 		          u_int64_t value)
  */
 func ConntrackSetAttrU64(ct *Conntrack, attr_type ConntrackAttr, value uint64) error {
@@ -265,7 +271,7 @@ func ConntrackGetAttrU64(ct *Conntrack, attr_type ConntrackAttr) (uint64, error)
 func ConntrackAttrIsSet(ct *Conntrack, attr_type ConntrackAttr) (bool, error) {
 	// is error needed?
 	// yes, original document says:
-	// 
+	//
 	//   On error, -1 is returned and errno is set appropiately, otherwise
 	//   the value of the attribute is returned.
 	ret, err := C.nfct_attr_is_set((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type))
@@ -316,12 +322,12 @@ func ConntrackSetAttrGrp(ct *Conntrack, attr_type ConntrackAttrGrp, data unsafe.
 	C.nfct_set_attr_grp((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr_grp(attr_type), data)
 	return nil
 }
-func ConntrackSetAttrGrpPtr(ct *Conntrack, attr_type ConntrackAttrGrp, data interface{}) {
+func ConntrackSetAttrGrpPtr(ct *Conntrack, attr_type ConntrackAttrGrp, data interface{}) error {
 	v := reflect.ValueOf(data)
 	if v.Kind() != reflect.Ptr {
 		panic("pointer required for value")
 	}
-	ConntrackSetAttrGrp(ct, attr_type, unsafe.Pointer(v.Pointer()))
+	return ConntrackSetAttrGrp(ct, attr_type, unsafe.Pointer(v.Pointer()))
 }
 
 /**
@@ -331,11 +337,11 @@ func ConntrackSetAttrGrpPtr(ct *Conntrack, attr_type ConntrackAttrGrp, data inte
  *		         const enum nf_conntrack_attr_grp type,
  *		         void *data)
  */
-func ConntrackGetAttrGrp(ct *Conntrack, attr_type ConntrackAttrGrp, data unsafe.Pointer) (int, error) {
-	ret, err := C.nfct_get_attr_grp((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr_grp(attr_type), data)
-	return int(ret), err
+func ConntrackGetAttrGrp(ct *Conntrack, attr_type ConntrackAttrGrp, data unsafe.Pointer) error {
+	_, err := C.nfct_get_attr_grp((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr_grp(attr_type), data)
+	return err
 }
-func ConntrackGetAttrGrpPtr(ct *Conntrack, attr_type ConntrackAttrGrp, data interface{}) (int, error) {
+func ConntrackGetAttrGrpPtr(ct *Conntrack, attr_type ConntrackAttrGrp, data interface{}) error {
 	v := reflect.ValueOf(data)
 	if v.Kind() != reflect.Ptr {
 		panic("pointer required for value")
@@ -405,20 +411,12 @@ func ConntrackSnprintfLabels(buf []byte, ct *Conntrack, msg_type, out_type, flag
 	return int(ret), err
 }
 
-/**
- * nfct_compare - compare two conntrack objects
- *
- * int nfct_compare(const struct nf_conntrack *ct1, 
- *		    const struct nf_conntrack *ct2)
- */
-func ConntrackCompare(ct1, ct2 *Conntrack) int {
-	return int(C.nfct_compare((*C.struct_nf_conntrack)(ct1), (*C.struct_nf_conntrack)(ct2)))
-}
+// nfct_compare - compare two conntrack objects
 
 /**
  * nfct_cmp - compare two conntrack objects
  *
- * int nfct_cmp(const struct nf_conntrack *ct1, 
+ * int nfct_cmp(const struct nf_conntrack *ct1,
  *	        const struct nf_conntrack *ct2,
  *	        unsigned int flags)
  */
@@ -475,7 +473,7 @@ func FilterDestroy(filter *Filter) {
  * nfct_filter_add_attr - add a filter attribute of the filter object
  *
  * void nfct_filter_add_attr(struct nfct_filter *filter,
- *			     const enum nfct_filter_attr type, 
+ *			     const enum nfct_filter_attr type,
  *			     const void *value)
  */
 func FilterAddAttr(filter *Filter, attr_type FilterAttr, value unsafe.Pointer) error {

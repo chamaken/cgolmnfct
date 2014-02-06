@@ -95,6 +95,8 @@ comparison
 | nfct_attr_unset			| ConntrackAttrUnset		|				|
 | nfct_set_attr_grp			| ConntrackSetAttrGrp		|				|
 | (add)					| ConntrackSetAttrGrpPtr	|				|
+| nfct_get_attr_grp			| ConntrackSetAttrGrp		|				|
+| (add)					| ConntrackSetAttrGrpPtr	|				|
 | nfct_attr_grp_is_set			| ConntrackAttrGrpIsSet		|				|
 | nfct_attr_grp_unset			| ConntrackAttrGrpUnset		|				|
 | nfct_snprintf				| ConntrackSnprintf		|				|
@@ -161,41 +163,3 @@ comparison
 | nfexp_nlmsg_build			| ExpectNlmsgBuild		|				|
 | nfexp_nlmsg_parse			| ExpectNlmsgParse		|				|
 | ------------------------------------- | ----------------------------- | ----------------------------- | 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

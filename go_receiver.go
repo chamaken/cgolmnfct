@@ -18,10 +18,10 @@ import (
  */
 
 // Conntrack object handling
-func (ct *Conntrack) Destroy()						{ ConntrackDestroy(ct) }
+func (ct *Conntrack) Destroy()							{ ConntrackDestroy(ct) }
 func (ct *Conntrack) Clone() (*Conntrack, error)				{ return ConntrackClone(ct)}
-func (ct *Conntrack) Setobjopt(option uint) (int, error)			{ return ConntrackSetobjopt(ct, option) }
-func (ct *Conntrack) Objopt(option uint) (int, error)				{ return ConntrackGetobjopt(ct, option)}
+func (ct *Conntrack) Setobjopt(option uint) error				{ return ConntrackSetobjopt(ct, option) }
+func (ct *Conntrack) Objopt(option uint) (int, error)				{ return ConntrackGetobjopt(ct, option) }
 func (ct *Conntrack) SetAttrL(attr_type ConntrackAttr, value unsafe.Pointer, size Size_t) error	{ return ConntrackSetAttrL(ct, attr_type, value, size) }
 func (ct *Conntrack) SetAttrLPtr(attr_type ConntrackAttr, value interface{}) error	{ return ConntrackSetAttrLPtr(ct, attr_type, value) }
 func (ct *Conntrack) SetAttr(attr_type ConntrackAttr, value unsafe.Pointer) error	{ return ConntrackSetAttr(ct, attr_type, value) }
@@ -39,13 +39,13 @@ func (ct *Conntrack) AttrIsSet(attr_type ConntrackAttr) (bool, error)	{ return C
 func (ct *Conntrack) AttrIsSetArray(type_array []ConntrackAttr) (bool, error)	{ return ConntrackAttrIsSetArray(ct, type_array) }
 func (ct *Conntrack) AttrUnset(attr_type ConntrackAttr) error		{ return ConntrackAttrUnset(ct, attr_type) }
 func (ct *Conntrack) SetAttrGrp(attr_type ConntrackAttrGrp, data unsafe.Pointer) error	{ return ConntrackSetAttrGrp(ct, attr_type, data) }
-func (ct *Conntrack) SetAttrGrpPtr(attr_type ConntrackAttrGrp, data interface{})	{ ConntrackSetAttrGrpPtr(ct, attr_type, data) }
-func (ct *Conntrack) AttrGrp(attr_type ConntrackAttrGrp, data unsafe.Pointer) (int, error)	{ return ConntrackGetAttrGrp(ct, attr_type, data) }
+func (ct *Conntrack) SetAttrGrpPtr(attr_type ConntrackAttrGrp, data interface{}) error	{ return ConntrackSetAttrGrpPtr(ct, attr_type, data) }
+func (ct *Conntrack) AttrGrp(attr_type ConntrackAttrGrp, data unsafe.Pointer) error	{ return ConntrackGetAttrGrp(ct, attr_type, data) }
+func (ct *Conntrack) AttrGrpPtr(attr_type ConntrackAttrGrp, data interface{}) error	{ return ConntrackGetAttrGrpPtr(ct, attr_type, data) }
 func (ct *Conntrack) AttrGrpIsSet(attr_type ConntrackAttrGrp) (bool, error)	{ return ConntrackAttrGrpIsSet(ct, attr_type) }
 func (ct *Conntrack) AttrGrpUnset(attr_type ConntrackAttrGrp) error	{ return ConntrackAttrGrpUnset(ct, attr_type) }
 func (ct *Conntrack) Snprintf(buf []byte, msg_type ConntrackMsgType, out_type, flags uint) (int, error)	{ return ConntrackSnprintf(buf, ct, msg_type, out_type, flags) }
 func (ct *Conntrack) SnprintfLabels(buf []byte, msg_type, out_type, flags uint, label_map *Labelmap) (int, error) { return ConntrackSnprintfLabels(buf, ct, msg_type, out_type, flags, label_map) }
-func (ct *Conntrack) Compare(ct2 *Conntrack) int		{ return ConntrackCompare(ct, ct2) }
 func (ct *Conntrack) Cmp(ct2 *Conntrack, flags uint) int	{ return ConntrackCmp(ct, ct2, flags) }
 func (ct *Conntrack) Copy(dst *Conntrack, flags uint)	{ ConntrackCopy(dst, ct, flags) }
 func (ct *Conntrack) CopyAttr(dst *Conntrack, attr_type ConntrackAttr)	{ ConntrackCopyAttr(dst, ct, attr_type) }
@@ -100,6 +100,3 @@ func (exp *Expect) AttrUnset(attr_type ExpectAttr) (int, error)		{ return Expect
 func (exp *Expect) Snprintf(buf []byte, msg_type ConntrackMsgType, out_type, flags uint) (int, error) { return ExpectSnprintf(buf, exp, msg_type, out_type, flags) }
 func (exp *Expect) NlmsgBuild(nlh *mnl.Nlmsghdr) (int, error)	{ return ExpectNlmsgBuild(nlh, exp) }
 func (exp *Expect) NlmsgParse(nlh *mnl.Nlmsghdr) (int, error)	{ return ExpectNlmsgParse(nlh, exp) }
-
-
-
