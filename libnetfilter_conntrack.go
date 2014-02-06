@@ -243,7 +243,7 @@ const (
 )
 
 // Bitset representing status of connection. Taken from linux/netfilter/nf_conntrack_common.h
-// 
+//
 // Note: For backward compatibility this shouldn't ever change
 // 	 in kernel space.
 type IpConntrackStatus C.enum_ip_conntrack_status

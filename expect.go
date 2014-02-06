@@ -66,7 +66,7 @@ func ExpectCmp(exp1, exp2 *Expect, flags int) int {
  * nfexp_set_attr - set the value of a certain expect attribute
  *
  * void nfexp_set_attr(struct nf_expect *exp,
- *		       const enum nf_expect_attr type, 
+ *		       const enum nf_expect_attr type,
  *		       const void *value)
  */
 func ExpectSetAttr(exp *Expect, attr_type ExpectAttr, value unsafe.Pointer) error {
@@ -88,7 +88,7 @@ func ExpectSetAttrPtr(exp *Expect, attr_type ExpectAttr, value interface{}) erro
  * nfexp_set_attr_u8 - set the value of a certain expect attribute
  *
  * void nfexp_set_attr_u8(struct nf_expect *exp,
- *			  const enum nf_expect_attr type, 
+ *			  const enum nf_expect_attr type,
  *		          u_int8_t value)
  */
 func ExpectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) error {
@@ -103,7 +103,7 @@ func ExpectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) error {
  * nfexp_set_attr_u16 - set the value of a certain expect attribute
  *
  * void nfexp_set_attr_u16(struct nf_expect *exp,
- *			   const enum nf_expect_attr type, 
+ *			   const enum nf_expect_attr type,
  *			   u_int16_t value)
  */
 func ExpectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) error {
@@ -118,7 +118,7 @@ func ExpectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) error {
  * nfexp_set_attr_u32 - set the value of a certain expect attribute
  *
  * void nfexp_set_attr_u32(struct nf_expect *exp,
- *			   const enum nf_expect_attr type, 
+ *			   const enum nf_expect_attr type,
  *			   u_int32_t value)
  */
 func ExpectSetAttrU32(exp *Expect, attr_type ExpectAttr, value uint32) error {
@@ -209,7 +209,7 @@ func ExpectAttrUnset(exp *Expect, attr_type ExpectAttr) (int, error) {
  *		      const struct nf_expect *exp,
  *		      unsigned int msg_type,
  *		      unsigned int out_type,
- *		      unsigned int flags) 
+ *		      unsigned int flags)
  */
 func ExpectSnprintf(buf []byte, exp *Expect, msg_type ConntrackMsgType, out_type, flags uint) (int, error) {
 	ret, err := C.nfexp_snprintf((*C.char)(unsafe.Pointer(&buf[0])), C.uint(len(buf)), (*C.struct_nf_expect)(exp),
