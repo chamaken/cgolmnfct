@@ -14,7 +14,7 @@ import (
 )
 
 // almost just calling them
-var _ = Describe("Cpylmnfct", func() {
+var _ = Describe("Cpylmnfct Conntrack", func() {
 	fmt.Fprintf(os.Stdout, "Hello, conntrack tester!\n")
 	var (
 		nlmsgbuf10 []byte
@@ -466,7 +466,8 @@ var _ = Describe("Cpylmnfct", func() {
 			ct, _ := nfct.NewConntrack()
 			defer ct.Destroy()
 			ct.SetAttrU8(nfct.ATTR_ORIG_L3PROTO, 11)
-			clone, _ := ct.Clone()
+			clone, err := ct.Clone()
+			Expect(err).To(BeNil())
 			defer clone.Destroy()
 			v, _ := clone.AttrU8(nfct.ATTR_ORIG_L3PROTO)
 			Expect(v).To(Equal(uint8(11)))
@@ -641,7 +642,7 @@ var _ = Describe("Cpylmnfct", func() {
 		})
 	})
 	Context("cmp", func() {
-		It("shoule work NFCT_CMP_ALL and STRICT flag", func() {
+		It("shoule work with NFCT_CMP_ALL and STRICT flag", func() {
 			ct1, _ := nfct.NewConntrack()
 			defer ct1.Destroy()
 			ct2, _ := nfct.NewConntrack()
@@ -696,7 +697,6 @@ var _ = Describe("Cpylmnfct", func() {
 			ret8, _ := ct2.AttrU8(nfct.ATTR_ORIG_L3PROTO)
 			Expect(ret8).To(Equal(uint8(123)))
 			_, err := ct2.AttrU16(nfct.ATTR_ORIG_PORT_SRC)
-			fmt.Fprintf(os.Stderr, "err: %s\n", err)
 			Expect(err).To(Equal(syscall.ENODATA))
 		})
 	})
