@@ -96,7 +96,7 @@ func (exp *Expect) AttrU8(attr_type ExpectAttr) (uint8, error)		{ return ExpectG
 func (exp *Expect) AttrU16(attr_type ExpectAttr) (uint16, error)	{ return ExpectGetAttrU16(exp, attr_type) }
 func (exp *Expect) AttrU32(attr_type ExpectAttr) (uint32, error)	{ return ExpectGetAttrU32(exp, attr_type) }
 func (exp *Expect) AttrIsSet(attr_type ExpectAttr) (bool, error)	{ return ExpectAttrIsSet(exp, attr_type) }
-func (exp *Expect) AttrUnset(attr_type ExpectAttr) (int, error)		{ return ExpectAttrUnset(exp, attr_type) }
+func (exp *Expect) AttrUnset(attr_type ExpectAttr) error		{ return ExpectAttrUnset(exp, attr_type) }
 func (exp *Expect) Snprintf(buf []byte, msg_type ConntrackMsgType, out_type, flags uint) (int, error) { return ExpectSnprintf(buf, exp, msg_type, out_type, flags) }
 func (exp *Expect) NlmsgBuild(nlh *mnl.Nlmsghdr) (int, error)	{ return ExpectNlmsgBuild(nlh, exp) }
 func (exp *Expect) NlmsgParse(nlh *mnl.Nlmsghdr) (int, error)	{ return ExpectNlmsgParse(nlh, exp) }

@@ -28,6 +28,7 @@ func ExpectNew() (*Expect, error) {
 	ret, err := C.nfexp_new()
 	return (*Expect)(ret), err
 }
+func NewExpect() (*Expect, error) { return ExpectNew() }
 
 /**
  * nfexp_destroy - release an expectation object
@@ -190,9 +191,9 @@ func ExpectAttrIsSet(exp *Expect, attr_type ExpectAttr) (bool, error) {
  * int nfexp_attr_unset(struct nf_expect *exp,
  *		        const enum nf_expect_attr type)
  */
-func ExpectAttrUnset(exp *Expect, attr_type ExpectAttr) (int, error) {
-	ret, err := C.nfexp_attr_unset((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type))
-	return int(ret), err
+func ExpectAttrUnset(exp *Expect, attr_type ExpectAttr) error {
+	_, err := C.nfexp_attr_unset((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type))
+	return err
 }
 
 // NO Low level object to Netlink message
