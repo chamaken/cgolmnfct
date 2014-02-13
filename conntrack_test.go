@@ -671,9 +671,9 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 	})
 	Context("copy", func() {
 		It("should have same attrs", func() {
-			ct1, _ := nfct.ConntrackNew()
+			ct1, _ := nfct.NewConntrack()
 			defer ct1.Destroy()
-			ct2, _ := nfct.ConntrackNew()
+			ct2, _ := nfct.NewConntrack()
 			defer ct2.Destroy()
 
 			ct1.SetAttrU8(nfct.ATTR_ORIG_L3PROTO, 123)
