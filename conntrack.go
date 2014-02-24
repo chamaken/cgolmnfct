@@ -28,7 +28,6 @@ func conntrackNew() (*Conntrack, error) {
 	ret, err := C.nfct_new()
 	return (*Conntrack)(ret), err
 }
-func NewConntrack() (*Conntrack, error) { return conntrackNew() }
 
 // void nfct_destroy(struct nf_conntrack *ct)
 func conntrackDestroy(ct *Conntrack) {
@@ -331,7 +330,6 @@ func filterCreate() (*Filter, error) {
 	ret, err := C.nfct_filter_create()
 	return (*Filter)(ret), err
 }
-func NewFilter() (*Filter, error) { return filterCreate() }
 
 // void nfct_filter_destroy(struct nfct_filter *filter)
 func filterDestroy(filter *Filter) {
@@ -370,21 +368,23 @@ func filterAddAttrU32(filter *Filter, attr FilterAttr, value uint32) error {
 // int nfct_filter_set_logic(struct nfct_filter *filter,
 //			     const enum nfct_filter_attr attr,
 //			     const enum nfct_filter_logic logic);
-func filterSetLogic(filter *Filter, attr FilterAttr, logic FilterLogic) (int, error) {
-	ret, err := C.nfct_filter_set_logic((*C.struct_nfct_filter)(filter), C.enum_nfct_filter_attr(attr), C.enum_nfct_filter_logic(logic))
-	return int(ret), err
+func filterSetLogic(filter *Filter, attr FilterAttr, logic FilterLogic) error {
+	_, err := C.nfct_filter_set_logic((*C.struct_nfct_filter)(filter), C.enum_nfct_filter_attr(attr), C.enum_nfct_filter_logic(logic))
+	return err
 }
 
 // int nfct_filter_attach(int fd, struct nfct_filter *filter);
-func filterAttach(fd int, filter *Filter) (int, error) {
-	ret, err := C.nfct_filter_attach(C.int(fd), (*C.struct_nfct_filter)(filter))
-	return int(ret), err
+func filterAttach(fd int, filter *Filter) error {
+	_, err := C.nfct_filter_attach(C.int(fd), (*C.struct_nfct_filter)(filter))
+	return err
 }
 
 // int nfct_filter_detach(int fd);
-func filterDetach(fd int) (int, error) {
-	ret, err := C.nfct_filter_detach(C.int(fd))
-	return int(ret), err
+
+// detach an existing filter
+func FilterDetach(fd int)  error {
+	_, err := C.nfct_filter_detach(C.int(fd))
+	return err
 }
 
 // struct nfct_filter_dump *nfct_filter_dump_create(void);
@@ -392,7 +392,6 @@ func filterDumpCreate() (*FilterDump, error) {
 	ret, err := C.nfct_filter_dump_create()
 	return (*FilterDump)(ret), err
 }
-func NewFilterDump() (*FilterDump, error) { return filterDumpCreate() }
 
 // void nfct_filter_dump_destroy(struct nfct_filter_dump *filter);
 func filterDumpDestroy(filter *FilterDump) {
@@ -452,7 +451,6 @@ func labelmapNew(mapfile string) (*Labelmap, error) {
 	ret, err := C.nfct_labelmap_new(cstr)
 	return (*Labelmap)(ret), err
 }
-func NewLabelmap(mapfile string) (*Labelmap, error) { return labelmapNew(mapfile) }
 
 // void nfct_labelmap_destroy(struct nfct_labelmap *map)
 func labelmapDestroy(labelmap *Labelmap) {
@@ -464,7 +462,6 @@ func bitmaskNew(max uint) (*Bitmask, error) {
 	ret, err := C.nfct_bitmask_new(C.uint(max))
 	return (*Bitmask)(ret), err
 }
-func NewBitmask(max uint) (*Bitmask, error) { return bitmaskNew(max) }
 
 // struct nfct_bitmask *nfct_bitmask_clone(const struct nfct_bitmask *b)
 func bitmaskClone(b *Bitmask) (*Bitmask, error) {
