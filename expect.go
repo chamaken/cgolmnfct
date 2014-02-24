@@ -23,7 +23,6 @@ func expectNew() (*Expect, error) {
 	ret, err := C.nfexp_new()
 	return (*Expect)(ret), err
 }
-func NewExpect() (*Expect, error) { return expectNew() }
 
 // void nfexp_destroy(struct nf_expect *exp)
 func expectDestroy(exp *Expect) {
