@@ -44,8 +44,3 @@ type FilterIpv4		C.struct_nfct_filter_ipv4
 
 const SizeofFilterIpv6	= C.sizeof_struct_nfct_filter_ipv6
 type FilterIpv6		C.struct_nfct_filter_ipv6
-
-
-// dump filtering
-const SizeofFilterDumpMark	= C.sizeof_struct_nfct_filter_dump_mark
-type FilterDumpMark		C.struct_nfct_filter_dump_mark

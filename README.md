@@ -42,7 +42,6 @@ All of internal structs are opaque as...
 * struct nfct_bitmask / Bitmask
 * struct nfct_labelmap / Labelmap
 * struct nfct_filter / Filter
-* struct nfct_filter_dump / FilterDump
 
 
 
@@ -118,11 +117,10 @@ comparison
 | nfct_filter_attach			| FilterAttach			|				|
 | nfct_filter_detach			| FilterDetach			|				|
 | ------------------------------------- | ----------------------------- | ----------------------------- | 
-| nfct_filter_dump_create		| FilterDumpCreate		|				|
-| nfct_filter_dump_destroy		| FilterDumpDestroy		|				|
-| nfct_filter_dump_set_attr		| FilterDumpSetAttr		|				|
-| (add)					| FilterDumpSetAttrPtr		|				|
-| nfct_filter_dump_set_attr_u8		| FilterDumpSetAttrU8		|				|
+| nfct_filter_dump_create		| (Not implemented)		|				|
+| nfct_filter_dump_destroy		| (Not implemented)		|				|
+| nfct_filter_dump_set_attr		| (Not implemented)		|				|
+| nfct_filter_dump_set_attr_u8		| (Not implemented)		|				|
 | ------------------------------------- | ----------------------------- | ----------------------------- | 
 | nfct_build_conntrack			| (Not implemented)		|				|
 | nfct_parse_conntrack			| (Not implemented)		|				|

@@ -19,7 +19,6 @@ type Conntrack	C.struct_nf_conntrack
 type Bitmask	C.struct_nfct_bitmask
 type Labelmap	C.struct_nfct_labelmap
 type Filter	C.struct_nfct_filter
-type FilterDump	C.struct_nfct_filter_dump
 // all represented [0]byte
 
 
@@ -385,46 +384,6 @@ func filterAttach(fd int, filter *Filter) error {
 func FilterDetach(fd int)  error {
 	_, err := C.nfct_filter_detach(C.int(fd))
 	return err
-}
-
-// struct nfct_filter_dump *nfct_filter_dump_create(void);
-func filterDumpCreate() (*FilterDump, error) {
-	ret, err := C.nfct_filter_dump_create()
-	return (*FilterDump)(ret), err
-}
-
-// void nfct_filter_dump_destroy(struct nfct_filter_dump *filter);
-func filterDumpDestroy(filter *FilterDump) {
-	C.nfct_filter_dump_destroy((*C.struct_nfct_filter_dump)(filter))
-}
-
-// void nfct_filter_dump_set_attr(struct nfct_filter_dump *filter_dump,
-//				  const enum nfct_filter_dump_attr type,
-//			          const void *data);
-func filterDumpSetAttr(filter_dump *FilterDump, attr_type FilterDumpAttr, data unsafe.Pointer) error {
-	if attr_type >= NFCT_FILTER_DUMP_MAX {
-		return syscall.EINVAL
-	}
-	C.nfct_filter_dump_set_attr((*C.struct_nfct_filter_dump)(filter_dump), C.enum_nfct_filter_dump_attr(attr_type), data)
-	return nil
-}
-func filterDumpSetAttrPtr(filter_dump *FilterDump, attr_type FilterDumpAttr, data interface{}) error {
-	v := reflect.ValueOf(data)
-	if v.Kind() != reflect.Ptr {
-		panic("pointer required for value")
-	}
-	return filterDumpSetAttr(filter_dump, attr_type, unsafe.Pointer(v.Pointer()))
-}
-
-// void nfct_filter_dump_set_attr_u8(struct nfct_filter_dump *filter_dump,
-//				     const enum nfct_filter_dump_attr type,
-//				     u_int8_t data);
-func filterDumpSetAttrU8(filter_dump *FilterDump, attr_type FilterDumpAttr, data uint8) error {
-	if attr_type >= NFCT_FILTER_DUMP_MAX {
-		return syscall.EINVAL
-	}
-	C.nfct_filter_dump_set_attr_u8((*C.struct_nfct_filter_dump)(filter_dump), C.enum_nfct_filter_dump_attr(attr_type), C.u_int8_t(data))
-	return nil
 }
 
 // const char *nfct_labelmap_get_name(struct nfct_labelmap *m, unsigned int bit)

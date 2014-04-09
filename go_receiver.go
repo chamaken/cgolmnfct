@@ -416,36 +416,6 @@ func (filter *Filter) Attach(fd int) error {
 	return filterAttach(fd, filter)
 }
 
-// create a dump filter
-func NewFilterDump() (*FilterDump, error) {
-	return filterDumpCreate()
-}
-
-// destroy a dump filter
-//
-// This function releases the memory that is used by the filter object.
-func (filter_dump *FilterDump) Destroy() {
-	filterDumpDestroy(filter_dump)
-}
-
-// set filter attribute
-func (filter_dump *FilterDump) SetAttr(attr_type FilterDumpAttr, data unsafe.Pointer) error {
-	return filterDumpSetAttr(filter_dump, attr_type, data)
-}
-
-// set filter attribute
-//
-// This function change value type to just pointer not unsafe by wrapping raw SetAttr.
-func (filter_dump *FilterDump) SetAttrPtr(attr_type FilterDumpAttr, data interface{}) error {
-	return filterDumpSetAttrPtr(filter_dump, attr_type, data)
-}
-
-// set u8 dump filter attribute
-func (filter_dump *FilterDump) SetAttrU8(attr_type FilterDumpAttr, data uint8) error {
-	return filterDumpSetAttrU8(filter_dump, attr_type, data)
-}
-
-
 // get name of the label bit
 //
 // returns a string of the name associated with the label.

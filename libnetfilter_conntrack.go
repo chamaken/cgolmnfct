@@ -210,14 +210,6 @@ const (
 )
 
 
-// dump filtering
-type FilterDumpAttr C.enum_nfct_filter_dump_attr
-const (
-	NFCT_FILTER_DUMP_MARK			FilterDumpAttr = C.NFCT_FILTER_DUMP_MARK
-	NFCT_FILTER_DUMP_L3NUM			FilterDumpAttr = C.NFCT_FILTER_DUMP_L3NUM
-	NFCT_FILTER_DUMP_MAX			FilterDumpAttr = C.NFCT_FILTER_DUMP_MAX
-)
-
 type FilterLogic C.enum_nfct_filter_logic
 const (
 	NFCT_FILTER_LOGIC_POSITIVE		FilterLogic	= C.NFCT_FILTER_LOGIC_POSITIVE
