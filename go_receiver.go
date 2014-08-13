@@ -55,7 +55,7 @@ package cgolmnfct
 import "C"
 import (
 	"unsafe"
-	mnl "cgolmnl"
+	mnl "github.com/chamaken/cgolmnl"
 )
 
 // allocate a new conntrack

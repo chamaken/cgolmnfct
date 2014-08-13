@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"syscall"
 	"unsafe"
-	mnl "cgolmnl"
+	mnl "github.com/chamaken/cgolmnl"
 )
 
 /*

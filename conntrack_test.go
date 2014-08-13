@@ -1,9 +1,9 @@
 package cgolmnfct_test
 
 import (
-	nfct "cgolmnfct"
-	. "cgolmnfct/testlib"
-	mnl "cgolmnl"
+	nfct "github.com/chamaken/cgolmnfct"
+	. "github.com/chamaken/cgolmnfct/testlib"
+	mnl "github.com/chamaken/cgolmnl"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

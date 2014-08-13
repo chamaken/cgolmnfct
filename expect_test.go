@@ -1,7 +1,7 @@
 package cgolmnfct_test
 
 import (
-	nfct "cgolmnfct"
+	nfct "github.com/chamaken/cgolmnfct"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
