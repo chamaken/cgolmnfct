@@ -11,9 +11,9 @@ package main
 import "C"
 
 import (
-	nfct "cgolmnfct"
-	mnl "cgolmnl"
 	"fmt"
+	nfct "github.com/chamaken/cgolmnfct"
+	mnl "github.com/chamaken/cgolmnl"
 	"os"
 	"syscall"
 )
@@ -33,7 +33,7 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 		msg_type = nfct.NFCT_T_DESTROY
 	}
 
-	ct, err := nfct.ConntrackNew()
+	ct, err := nfct.NewConntrack()
 	if err != nil {
 		return mnl.MNL_CB_OK, 0
 	}
@@ -51,7 +51,7 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 func main() {
 	buf := make([]byte, mnl.MNL_SOCKET_BUFFER_SIZE)
 
-	nl, err := mnl.SocketOpen(C.NETLINK_NETFILTER)
+	nl, err := mnl.NewSocket(C.NETLINK_NETFILTER)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "mnl_socket_open: %s\n", err)
 		os.Exit(C.EXIT_FAILURE)

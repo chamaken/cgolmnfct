@@ -1,5 +1,7 @@
 package main
 
+// This example requires CTA_MARK_MASK, introduced since 3.4
+
 /*
 #include <unistd.h>
 #include <stdlib.h>
@@ -13,10 +15,10 @@ package main
 import "C"
 
 import (
-	nfct "cgolmnfct"
-	mnl "cgolmnl"
-	"cgolmnl/inet"
 	"fmt"
+	nfct "github.com/chamaken/cgolmnfct"
+	mnl "github.com/chamaken/cgolmnl"
+	inet "github.com/chamaken/cgolmnl/inet"
 	"net"
 	"os"
 	"strconv"

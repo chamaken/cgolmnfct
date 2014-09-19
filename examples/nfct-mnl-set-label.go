@@ -11,9 +11,9 @@ package main
 import "C"
 
 import (
-	nfct "cgolmnfct"
-	mnl "cgolmnl"
 	"fmt"
+	nfct "github.com/chamaken/cgolmnfct"
+	mnl "github.com/chamaken/cgolmnl"
 	"os"
 	"strconv"
 	"syscall"
@@ -34,12 +34,12 @@ func set_label(ct *nfct.Conntrack, cbargs *callbackArgs) {
 
 	if b != nil {
 		if bit < 0 {
-			b, _ = nfct.BitmaskNew(0)
+			b, _ = nfct.NewBitmask(0)
 		} else if b.TestBit(uint(bit)) == 1 {
 			return
 		}
 	} else {
-		b, _ = nfct.BitmaskNew(0)
+		b, _ = nfct.NewBitmask(0)
 	}
 
 	if b == nil {
@@ -51,7 +51,7 @@ func set_label(ct *nfct.Conntrack, cbargs *callbackArgs) {
 	ct.SetAttrPtr(nfct.ATTR_CONNLABELS, b)
 
 	if bit >= 0 {
-		b, _ = nfct.BitmaskNew(uint(bit))
+		b, _ = nfct.NewBitmask(uint(bit))
 		if b != nil {
 			b.SetBit(uint(bit))
 			ct.SetAttrPtr(nfct.ATTR_CONNLABELS_MASK, b)
@@ -79,7 +79,7 @@ func set_label(ct *nfct.Conntrack, cbargs *callbackArgs) {
 
 func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 	buf := make([]byte, 4096)
-	ct, err := nfct.ConntrackNew()
+	ct, err := nfct.NewConntrack()
 	if err != nil {
 		return mnl.MNL_CB_OK, 0
 	}
@@ -111,7 +111,7 @@ func show_labels(l *nfct.Labelmap) {
 }
 
 func sock_nl_create() *mnl.Socket {
-	nl, err := mnl.SocketOpen(C.NETLINK_NETFILTER)
+	nl, err := mnl.NewSocket(C.NETLINK_NETFILTER)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "mnl_socket_open: %s\n", err)
 		os.Exit(C.EXIT_FAILURE)
@@ -127,7 +127,7 @@ func sock_nl_create() *mnl.Socket {
 
 func main() {
 	buf := make([]byte, mnl.MNL_SOCKET_BUFFER_SIZE)
-	l, err := nfct.LabelmapNew("")
+	l, err := nfct.NewLabelmap("")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "nfct_labelmap_new: %s\n", err)
 		os.Exit(C.EXIT_FAILURE)

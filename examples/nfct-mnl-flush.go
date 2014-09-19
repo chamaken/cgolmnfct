@@ -11,8 +11,8 @@ package main
 import "C"
 
 import (
-	mnl "cgolmnl"
 	"fmt"
+	mnl "github.com/chamaken/cgolmnl"
 	"os"
 	"time"
 )
@@ -20,7 +20,7 @@ import (
 func main() {
 	buf := make([]byte, mnl.MNL_SOCKET_BUFFER_SIZE)
 
-	nl, err := mnl.SocketOpen(C.NETLINK_NETFILTER)
+	nl, err := mnl.NewSocket(C.NETLINK_NETFILTER)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "mnl_socket_open: %s\n", err)
 		os.Exit(C.EXIT_FAILURE)

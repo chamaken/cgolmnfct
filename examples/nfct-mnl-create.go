@@ -12,10 +12,10 @@ package main
 import "C"
 
 import (
-	nfct "cgolmnfct"
-	mnl "cgolmnl"
-	. "cgolmnl/inet"
 	"fmt"
+	nfct "github.com/chamaken/cgolmnfct"
+	mnl "github.com/chamaken/cgolmnl"
+	inet "github.com/chamaken/cgolmnl/inet"
 	"os"
 	"time"
 )
@@ -23,7 +23,7 @@ import (
 func main() {
 	buf := make([]byte, mnl.MNL_SOCKET_BUFFER_SIZE)
 
-	nl, err := mnl.SocketOpen(C.NETLINK_NETFILTER)
+	nl, err := mnl.NewSocket(C.NETLINK_NETFILTER)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "mnl_socket_open: %s\n", err)
 		os.Exit(C.EXIT_FAILURE)
@@ -47,19 +47,19 @@ func main() {
 	nfh.Version = C.NFNETLINK_V0
 	nfh.Res_id = 0
 
-	ct, err := nfct.ConntrackNew()
+	ct, err := nfct.NewConntrack()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "nfct_new")
 		os.Exit(C.EXIT_FAILURE)
 	}
 
 	ct.SetAttrU8(nfct.ATTR_L3PROTO, C.AF_INET)
-	ct.SetAttrU32(nfct.ATTR_IPV4_SRC, InetAddr("1.1.1.1"))
-	ct.SetAttrU32(nfct.ATTR_IPV4_DST, InetAddr("2.2.2.2"))
+	ct.SetAttrU32(nfct.ATTR_IPV4_SRC, inet.InetAddr("1.1.1.1"))
+	ct.SetAttrU32(nfct.ATTR_IPV4_DST, inet.InetAddr("2.2.2.2"))
 
 	ct.SetAttrU8(nfct.ATTR_L4PROTO, C.IPPROTO_TCP)
-	ct.SetAttrU16(nfct.ATTR_PORT_SRC, Htons(20))
-	ct.SetAttrU16(nfct.ATTR_PORT_DST, Htons(10))
+	ct.SetAttrU16(nfct.ATTR_PORT_SRC, inet.Htons(20))
+	ct.SetAttrU16(nfct.ATTR_PORT_DST, inet.Htons(10))
 
 	ct.Setobjopt(nfct.NFCT_SOPT_SETUP_REPLY)
 
