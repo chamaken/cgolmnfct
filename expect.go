@@ -1,10 +1,10 @@
 package cgolmnfct
 
 import (
+	mnl "github.com/chamaken/cgolmnl"
 	"reflect"
 	"syscall"
 	"unsafe"
-	mnl "github.com/chamaken/cgolmnl"
 )
 
 /*
@@ -14,9 +14,7 @@ import (
 */
 import "C"
 
-
-type Expect	C.struct_nf_expect // [0]byte
-
+type Expect C.struct_nf_expect // [0]byte
 
 // struct nf_expect *nfexp_new(void)
 func expectNew() (*Expect, error) {

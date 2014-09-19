@@ -11,10 +11,10 @@ package main
 import "C"
 
 import (
+	mnl "cgolmnl"
 	"fmt"
 	"os"
 	"time"
-	mnl "cgolmnl"
 )
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_DELETE
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_ACK
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_ACK
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 

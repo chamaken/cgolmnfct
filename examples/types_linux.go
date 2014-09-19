@@ -8,8 +8,9 @@ package main
 */
 import "C"
 
-const SizeofNfgenmsg	= C.sizeof_struct_nfgenmsg
-type Nfgenmsg		C.struct_nfgenmsg
+const SizeofNfgenmsg = C.sizeof_struct_nfgenmsg
+
+type Nfgenmsg C.struct_nfgenmsg
 
 // nfct-daemon
-const SizeofSocklen_t	= C.sizeof_socklen_t
+const SizeofSocklen_t = C.sizeof_socklen_t

@@ -12,12 +12,12 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
+	. "cgolmnl/inet"
 	"fmt"
 	"os"
 	"time"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
-	. "cgolmnl/inet"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_NEW
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_CREATE|C.NLM_F_EXCL|C.NLM_F_ACK
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_CREATE | C.NLM_F_EXCL | C.NLM_F_ACK
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 

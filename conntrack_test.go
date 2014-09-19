@@ -24,425 +24,425 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 	)
 
 	BeforeEach(func() {
-		nlmsgbuf10 = []byte {
-						// ----------------	------------------
-			0xc4, 0x00, 0x00, 0x00,	// |  0000000196  |	| message length |
-			0x02, 0x01, 0x00, 0x00,	// | 00258 | ---- |	|  type | flags  |	IPCTNL_MSG_CT_DELETE
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x01, 0x02, 0x03, 0x04,	// | 01 02 03 04  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0xff, 0xfe, 0xfd, 0xfc,	// | ff fe fd fc  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xf8, 0x8f, 0x00, 0x00,	// | f8 8f 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x00, 0x35, 0x00, 0x00,	// | 00 35 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0xff, 0xfe, 0xfd, 0xfc,	// | ff fe fd fc  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x01, 0x02, 0x03, 0x04,	// | 01 02 03 04  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0x00, 0x35, 0x00, 0x00,	// | 00 35 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0xf8, 0x8f, 0x00, 0x00,	// | f8 8f 00 00  |	|      data      |
-			0x08, 0x00, 0x0c, 0x00,	// |00008|--|00012|	|len |flags| type|	CTA_ID *
-			0x17, 0x6d, 0x0d, 0x78,	// | 17 6d 0d 78  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_STATUS
-			0x00, 0x00, 0x00, 0x08,	// | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
-			0x1c, 0x00, 0x09, 0x80,	// |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_CONTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x1c, 0x00, 0x0a, 0x80,	// |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_CONTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-                }        	 		// ----------------	------------------
+		nlmsgbuf10 = []byte{
+			// ----------------	------------------
+			0xc4, 0x00, 0x00, 0x00, // |  0000000196  |	| message length |
+			0x02, 0x01, 0x00, 0x00, // | 00258 | ---- |	|  type | flags  |	IPCTNL_MSG_CT_DELETE
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x01, 0x02, 0x03, 0x04, // | 01 02 03 04  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0xff, 0xfe, 0xfd, 0xfc, // | ff fe fd fc  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xf8, 0x8f, 0x00, 0x00, // | f8 8f 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x00, 0x35, 0x00, 0x00, // | 00 35 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0xff, 0xfe, 0xfd, 0xfc, // | ff fe fd fc  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x01, 0x02, 0x03, 0x04, // | 01 02 03 04  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0x00, 0x35, 0x00, 0x00, // | 00 35 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0xf8, 0x8f, 0x00, 0x00, // | f8 8f 00 00  |	|      data      |
+			0x08, 0x00, 0x0c, 0x00, // |00008|--|00012|	|len |flags| type|	CTA_ID *
+			0x17, 0x6d, 0x0d, 0x78, // | 17 6d 0d 78  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_STATUS
+			0x00, 0x00, 0x00, 0x08, // | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
+			0x1c, 0x00, 0x09, 0x80, // |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_CONTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x1c, 0x00, 0x0a, 0x80, // |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_CONTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+		} // ----------------	------------------
 
-		nlmsgbuf11 = []byte {
-						// ----------------	------------------
-			0x84, 0x00, 0x00, 0x00,	// |  0000000132  |	| message length |
-			0x02, 0x01, 0x00, 0x00,	// | 00258 | ---- |	|  type | flags  |	IPCTNL_MSG_CT_DELETE
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x01, 0x02, 0x03, 0x04,	// | 01 02 03 04  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0xff, 0xfe, 0xfd, 0xfc,	// | ff fe fd fc  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xf8, 0x8f, 0x00, 0x00,	// | f8 8f 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x00, 0x35, 0x00, 0x00,	// | 00 35 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0xff, 0xfe, 0xfd, 0xfc,	// | ff fe fd fc  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x01, 0x02, 0x03, 0x04,	// | 01 02 03 04  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0x00, 0x35, 0x00, 0x00,	// | 00 35 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0xf8, 0x8f, 0x00, 0x00,	// | f8 8f 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_STATUS
-			0x00, 0x00, 0x00, 0x08,	// | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
-                }        	 		// ----------------	------------------
+		nlmsgbuf11 = []byte{
+			// ----------------	------------------
+			0x84, 0x00, 0x00, 0x00, // |  0000000132  |	| message length |
+			0x02, 0x01, 0x00, 0x00, // | 00258 | ---- |	|  type | flags  |	IPCTNL_MSG_CT_DELETE
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x01, 0x02, 0x03, 0x04, // | 01 02 03 04  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0xff, 0xfe, 0xfd, 0xfc, // | ff fe fd fc  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xf8, 0x8f, 0x00, 0x00, // | f8 8f 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x00, 0x35, 0x00, 0x00, // | 00 35 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0xff, 0xfe, 0xfd, 0xfc, // | ff fe fd fc  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x01, 0x02, 0x03, 0x04, // | 01 02 03 04  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0x00, 0x35, 0x00, 0x00, // | 00 35 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0xf8, 0x8f, 0x00, 0x00, // | f8 8f 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_STATUS
+			0x00, 0x00, 0x00, 0x08, // | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
+		} // ----------------	------------------
 
 		nlmsgbuf20 = []byte{
-						// ----------------	------------------
-			0xdc, 0x00, 0x00, 0x00,	// |  0000000220  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x01, 0x01, 0x01, 0x01,	// | 01 01 01 01  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x02, 0x02, 0x02, 0x02,	// | 02 02 02 02  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PTOTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0x04, 0x64, 0x00, 0x00,	// | 04 64 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x00, 0xa1, 0x00, 0x00,	// | 00 a1 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_TUPLE_V4_SRC
-			0x01, 0x01, 0x01, 0x01,	// | 01 01 01 01  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_TUP+E_V4_DST
-			0x02, 0x02, 0x02, 0x02,	// | 02 02 02 02  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_TUPLE_SRC_PORT
-			0x00, 0xa1, 0x00, 0x00,	// | 00 a1 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_TUPLE_DST_PORT
-			0x04, 0x64, 0x00, 0x00,	// | 04 64 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x0e,	// | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x00, 0x00, 0x99,	// | 00 00 00 99  |	|      data      |
-			0x1c, 0x00, 0x09, 0x80,	// |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x1c, 0x00, 0x0a, 0x80,	// |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0c, 0x00,	// |00008|--|00012|	|len |flags| type|	CTA_ID *
-			0x15, 0x50, 0xb8, 0xb8,	// | 15 50 b8 b8  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-                				// ----------------	------------------
-						// ----------------	------------------
-			0x0c, 0x01, 0x00, 0x00,	// |  0000000268  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x03, 0x05, 0x05, 0x05,	// | 03 03 03 03  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x06, 0x06, 0x06, 0x06,	// | 04 04 04 04  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x06, 0x00, 0x00, 0x00,	// | 06 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xc1, 0x79, 0x00, 0x00,	// | c1 79 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x01, 0xbd, 0x00, 0x00,	// | 01 bd 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
-			0x06, 0x06, 0x06, 0x06,	// |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
-			0x04, 0x04, 0x04, 0x04,	// | 04 04 04 04  |	|      data      |
-			0x05, 0x05, 0x05, 0x05,	// |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
-			0x03, 0x03, 0x03, 0x03,	// | 03 03 03 03  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
-			0x06, 0x00, 0x00, 0x00,	// | 06 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
-			0x01, 0xbd, 0x00, 0x00,	// | 01 bd 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
-			0xc1, 0x79, 0x00, 0x00,	// | c1 79 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x0e,	// | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x06, 0x97, 0x65,	// | 00 06 97 65  |	|      data      |
-			0x1c, 0x00, 0x09, 0x80,	// |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x1c, 0x00, 0x0a, 0x80,	// |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x30, 0x00, 0x04, 0x80,	// |00048|N-|00004|	|len |flags| type|	+ CTA_PROTOINFO
-			0x2c, 0x00, 0x01, 0x80,	// |00044|N-|00001|	|len |flags| type|	  + CTA_PROTOINFO_TCP
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTOINFO_TCP_STATE
-			0x03, 0x00, 0x00, 0x00,	// | 03 00 00 00  |	|      data      |
-			0x05, 0x00, 0x02, 0x00,	// |00005|--|00002|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_ORIGINAL
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|      data      |
-			0x05, 0x00, 0x03, 0x00,	// |00005|--|00003|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_REPLY
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x06, 0x00, 0x04, 0x00,	// |00006|--|00004|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_ORIGINAL
-			0x23, 0x00, 0x00, 0x00,	// | 23 00 00 00  |	|      data      |
-			0x06, 0x00, 0x05, 0x00,	// |00006|--|00005|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_REPLY
-			0x23, 0x00, 0x00, 0x00,	// | 23 00 00 00  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0c, 0x00,	// |00008|--|00012|	|len |flags| type|	CTA_ID *
-			0x14, 0xcc, 0x56, 0x58,	// | 14 cc 56 58  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-						// ----------------	------------------
-						// ----------------	------------------
-			0xdc, 0x00, 0x00, 0x00,	// |  0000000220  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x55, 0x55, 0x55, 0x55,	// | 55 55 55 55  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x66, 0x66, 0x66, 0x66,	// | 66 66 66 66  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xca, 0xda, 0x00, 0x00,	// | ca da 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x02, 0x02, 0x00, 0x00,	// | 02 02 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
-			0x66, 0x66, 0x66, 0x66,	// | 66 66 66 66  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
-			0x55, 0x55, 0x55, 0x55,	// | 55 55 55 55  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
-			0x02, 0x02, 0x00, 0x00,	// | 02 02 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
-			0xca, 0xda, 0x00, 0x00,	// | ca da 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x08,	// | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x00, 0x00, 0x13,	// | 00 00 00 13  |	|      data      |
-			0x1c, 0x00, 0x09, 0x80,	// |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x1c, 0x00, 0x0a, 0x80,	// |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
-			0x0c, 0x00, 0x01, 0x00,	// |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |	  CTA_COUNTERS_BYTES
-			0x0c, 0x00, 0x02, 0x00,	// |00012|--|00002|	|len |flags| type|
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0c, 0x00,	// |00008|--|00012|	|len |flags| type|	CTA_ID *
-			0x12, 0xd5, 0x69, 0xe8,	// | 12 d5 69 e8  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-		}				// ----------------	------------------
+			// ----------------	------------------
+			0xdc, 0x00, 0x00, 0x00, // |  0000000220  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x01, 0x01, 0x01, 0x01, // | 01 01 01 01  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x02, 0x02, 0x02, 0x02, // | 02 02 02 02  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PTOTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0x04, 0x64, 0x00, 0x00, // | 04 64 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x00, 0xa1, 0x00, 0x00, // | 00 a1 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_TUPLE_V4_SRC
+			0x01, 0x01, 0x01, 0x01, // | 01 01 01 01  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_TUP+E_V4_DST
+			0x02, 0x02, 0x02, 0x02, // | 02 02 02 02  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_TUPLE_SRC_PORT
+			0x00, 0xa1, 0x00, 0x00, // | 00 a1 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_TUPLE_DST_PORT
+			0x04, 0x64, 0x00, 0x00, // | 04 64 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x0e, // | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x00, 0x00, 0x99, // | 00 00 00 99  |	|      data      |
+			0x1c, 0x00, 0x09, 0x80, // |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x1c, 0x00, 0x0a, 0x80, // |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0c, 0x00, // |00008|--|00012|	|len |flags| type|	CTA_ID *
+			0x15, 0x50, 0xb8, 0xb8, // | 15 50 b8 b8  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+			// ----------------	------------------
+			// ----------------	------------------
+			0x0c, 0x01, 0x00, 0x00, // |  0000000268  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x03, 0x05, 0x05, 0x05, // | 03 03 03 03  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x06, 0x06, 0x06, 0x06, // | 04 04 04 04  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x06, 0x00, 0x00, 0x00, // | 06 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xc1, 0x79, 0x00, 0x00, // | c1 79 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x01, 0xbd, 0x00, 0x00, // | 01 bd 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
+			0x06, 0x06, 0x06, 0x06, // |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
+			0x04, 0x04, 0x04, 0x04, // | 04 04 04 04  |	|      data      |
+			0x05, 0x05, 0x05, 0x05, // |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
+			0x03, 0x03, 0x03, 0x03, // | 03 03 03 03  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
+			0x06, 0x00, 0x00, 0x00, // | 06 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
+			0x01, 0xbd, 0x00, 0x00, // | 01 bd 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
+			0xc1, 0x79, 0x00, 0x00, // | c1 79 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x0e, // | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x06, 0x97, 0x65, // | 00 06 97 65  |	|      data      |
+			0x1c, 0x00, 0x09, 0x80, // |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x1c, 0x00, 0x0a, 0x80, // |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x30, 0x00, 0x04, 0x80, // |00048|N-|00004|	|len |flags| type|	+ CTA_PROTOINFO
+			0x2c, 0x00, 0x01, 0x80, // |00044|N-|00001|	|len |flags| type|	  + CTA_PROTOINFO_TCP
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTOINFO_TCP_STATE
+			0x03, 0x00, 0x00, 0x00, // | 03 00 00 00  |	|      data      |
+			0x05, 0x00, 0x02, 0x00, // |00005|--|00002|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_ORIGINAL
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|      data      |
+			0x05, 0x00, 0x03, 0x00, // |00005|--|00003|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_REPLY
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x06, 0x00, 0x04, 0x00, // |00006|--|00004|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_ORIGINAL
+			0x23, 0x00, 0x00, 0x00, // | 23 00 00 00  |	|      data      |
+			0x06, 0x00, 0x05, 0x00, // |00006|--|00005|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_REPLY
+			0x23, 0x00, 0x00, 0x00, // | 23 00 00 00  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0c, 0x00, // |00008|--|00012|	|len |flags| type|	CTA_ID *
+			0x14, 0xcc, 0x56, 0x58, // | 14 cc 56 58  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+			// ----------------	------------------
+			// ----------------	------------------
+			0xdc, 0x00, 0x00, 0x00, // |  0000000220  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x55, 0x55, 0x55, 0x55, // | 55 55 55 55  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x66, 0x66, 0x66, 0x66, // | 66 66 66 66  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xca, 0xda, 0x00, 0x00, // | ca da 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x02, 0x02, 0x00, 0x00, // | 02 02 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
+			0x66, 0x66, 0x66, 0x66, // | 66 66 66 66  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
+			0x55, 0x55, 0x55, 0x55, // | 55 55 55 55  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
+			0x02, 0x02, 0x00, 0x00, // | 02 02 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
+			0xca, 0xda, 0x00, 0x00, // | ca da 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x08, // | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x00, 0x00, 0x13, // | 00 00 00 13  |	|      data      |
+			0x1c, 0x00, 0x09, 0x80, // |00028|N-|00009|	|len |flags| type|	+ CTA_COUNTERS_ORIG *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|	  CTA_COUNTERS_BYTES
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x1c, 0x00, 0x0a, 0x80, // |00028|N-|00010|	|len |flags| type|	+ CTA_COUNTERS_REPLY *
+			0x0c, 0x00, 0x01, 0x00, // |00012|--|00001|	|len |flags| type|	  CTA_COUNTERS_PACKETS
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |	  CTA_COUNTERS_BYTES
+			0x0c, 0x00, 0x02, 0x00, // |00012|--|00002|	|len |flags| type|
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0c, 0x00, // |00008|--|00012|	|len |flags| type|	CTA_ID *
+			0x12, 0xd5, 0x69, 0xe8, // | 12 d5 69 e8  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+		} // ----------------	------------------
 
 		nlmsgbuf21 = []byte{
-						// ----------------	------------------
-			0x9c, 0x00, 0x00, 0x00,	// |  0000000156  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x01, 0x01, 0x01, 0x01,	// | 01 01 01 01  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x02, 0x02, 0x02, 0x02,	// | 02 02 02 02  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PTOTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0x04, 0x64, 0x00, 0x00,	// | 04 64 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x00, 0xa1, 0x00, 0x00,	// | 00 a1 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_TUPLE_V4_SRC
-			0x01, 0x01, 0x01, 0x01,	// | 01 01 01 01  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_TUP+E_V4_DST
-			0x02, 0x02, 0x02, 0x02,	// | 02 02 02 02  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_TUPLE_SRC_PORT
-			0x00, 0xa1, 0x00, 0x00,	// | 00 a1 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_TUPLE_DST_PORT
-			0x04, 0x64, 0x00, 0x00,	// | 04 64 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x0e,	// | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x00, 0x00, 0x99,	// | 00 00 00 99  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-                				// ----------------	------------------
-						// ----------------	------------------
-			0xcc, 0x00, 0x00, 0x00,	// |  0000000204  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x03, 0x05, 0x05, 0x05,	// | 03 03 03 03  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x06, 0x06, 0x06, 0x06,	// | 04 04 04 04  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x06, 0x00, 0x00, 0x00,	// | 06 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xc1, 0x79, 0x00, 0x00,	// | c1 79 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x01, 0xbd, 0x00, 0x00,	// | 01 bd 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
-			0x06, 0x06, 0x06, 0x06,	// |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
-			0x04, 0x04, 0x04, 0x04,	// | 04 04 04 04  |	|      data      |
-			0x05, 0x05, 0x05, 0x05,	// |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
-			0x03, 0x03, 0x03, 0x03,	// | 03 03 03 03  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
-			0x06, 0x00, 0x00, 0x00,	// | 06 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
-			0x01, 0xbd, 0x00, 0x00,	// | 01 bd 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
-			0xc1, 0x79, 0x00, 0x00,	// | c1 79 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x0e,	// | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x06, 0x97, 0x65,	// | 00 06 97 65  |	|      data      |
-			0x30, 0x00, 0x04, 0x80,	// |00048|N-|00004|	|len |flags| type|	+ CTA_PROTOINFO
-			0x2c, 0x00, 0x01, 0x80,	// |00044|N-|00001|	|len |flags| type|	  + CTA_PROTOINFO_TCP
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTOINFO_TCP_STATE
-			0x03, 0x00, 0x00, 0x00,	// | 03 00 00 00  |	|      data      |
-			0x05, 0x00, 0x02, 0x00,	// |00005|--|00002|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_ORIGINAL
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|      data      |
-			0x05, 0x00, 0x03, 0x00,	// |00005|--|00003|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_REPLY
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x06, 0x00, 0x04, 0x00,	// |00006|--|00004|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_ORIGINAL
-			0x23, 0x00, 0x00, 0x00,	// | 23 00 00 00  |	|      data      |
-			0x06, 0x00, 0x05, 0x00,	// |00006|--|00005|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_REPLY
-			0x23, 0x00, 0x00, 0x00,	// | 23 00 00 00  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-						// ----------------	------------------
-						// ----------------	------------------
-			0x9c, 0x00, 0x00, 0x00,	// |  0000000156  |	| message length |
-			0x00, 0x01, 0x02, 0x00,	// | 00256 | -M-- |	|  type | flags  |
-			0x00, 0x00, 0x00, 0x00,	// |  0000000000  |	| sequence number|
-			0xca, 0x24, 0x00, 0x00,	// |  0000009418  |	|     port ID    |
-						// ----------------	------------------
-			0x02, 0x00, 0x00, 0x00,	// | 02 00 00 00  |	|  extra header  |
-			0x34, 0x00, 0x01, 0x80,	// |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
-			0x55, 0x55, 0x55, 0x55,	// | 55 55 55 55  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
-			0x66, 0x66, 0x66, 0x66,	// | 66 66 66 66  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
-			0xca, 0xda, 0x00, 0x00,	// | ca da 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
-			0x02, 0x02, 0x00, 0x00,	// | 02 02 00 00  |	|      data      |
-			0x34, 0x00, 0x02, 0x80,	// |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
-			0x14, 0x00, 0x01, 0x80,	// |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
-			0x08, 0x00, 0x01, 0x00,	// |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
-			0x66, 0x66, 0x66, 0x66,	// | 66 66 66 66  |	|      data      |
-			0x08, 0x00, 0x02, 0x00,	// |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
-			0x55, 0x55, 0x55, 0x55,	// | 55 55 55 55  |	|      data      |
-			0x1c, 0x00, 0x02, 0x80,	// |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
-			0x05, 0x00, 0x01, 0x00,	// |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
-			0x11, 0x00, 0x00, 0x00,	// | 11 00 00 00  |	|      data      |
-			0x06, 0x00, 0x02, 0x00,	// |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
-			0x02, 0x02, 0x00, 0x00,	// | 02 02 00 00  |	|      data      |
-			0x06, 0x00, 0x03, 0x00,	// |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
-			0xca, 0xda, 0x00, 0x00,	// | ca da 00 00  |	|      data      |
-			0x08, 0x00, 0x03, 0x00,	// |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
-			0x00, 0x00, 0x00, 0x08,	// | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
-			0x08, 0x00, 0x07, 0x00,	// |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
-			0x00, 0x00, 0x00, 0x13,	// | 00 00 00 13  |	|      data      |
-			0x08, 0x00, 0x08, 0x00,	// |00008|--|00008|	|len |flags| type|	CTA_MARK
-			0x00, 0x00, 0x00, 0x00,	// | 00 00 00 00  |	|      data      |
-			0x08, 0x00, 0x0b, 0x00,	// |00008|--|00011|	|len |flags| type|	CTA_USE
-			0x00, 0x00, 0x00, 0x01,	// | 00 00 00 01  |	|      data      |
-		}				// ----------------	------------------
+			// ----------------	------------------
+			0x9c, 0x00, 0x00, 0x00, // |  0000000156  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x01, 0x01, 0x01, 0x01, // | 01 01 01 01  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x02, 0x02, 0x02, 0x02, // | 02 02 02 02  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PTOTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0x04, 0x64, 0x00, 0x00, // | 04 64 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x00, 0xa1, 0x00, 0x00, // | 00 a1 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	+ CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_TUPLE_V4_SRC
+			0x01, 0x01, 0x01, 0x01, // | 01 01 01 01  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_TUP+E_V4_DST
+			0x02, 0x02, 0x02, 0x02, // | 02 02 02 02  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_TUPLE_SRC_PORT
+			0x00, 0xa1, 0x00, 0x00, // | 00 a1 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_TUPLE_DST_PORT
+			0x04, 0x64, 0x00, 0x00, // | 04 64 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x0e, // | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x00, 0x00, 0x99, // | 00 00 00 99  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+			// ----------------	------------------
+			// ----------------	------------------
+			0xcc, 0x00, 0x00, 0x00, // |  0000000204  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x03, 0x05, 0x05, 0x05, // | 03 03 03 03  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x06, 0x06, 0x06, 0x06, // | 04 04 04 04  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x06, 0x00, 0x00, 0x00, // | 06 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xc1, 0x79, 0x00, 0x00, // | c1 79 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x01, 0xbd, 0x00, 0x00, // | 01 bd 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
+			0x06, 0x06, 0x06, 0x06, // |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
+			0x04, 0x04, 0x04, 0x04, // | 04 04 04 04  |	|      data      |
+			0x05, 0x05, 0x05, 0x05, // |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
+			0x03, 0x03, 0x03, 0x03, // | 03 03 03 03  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
+			0x06, 0x00, 0x00, 0x00, // | 06 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
+			0x01, 0xbd, 0x00, 0x00, // | 01 bd 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
+			0xc1, 0x79, 0x00, 0x00, // | c1 79 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x0e, // | 00 00 00 0e  |	|      data      |	  IPS_EXPECTED|SEEN_REPLY|ASSURED|CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x06, 0x97, 0x65, // | 00 06 97 65  |	|      data      |
+			0x30, 0x00, 0x04, 0x80, // |00048|N-|00004|	|len |flags| type|	+ CTA_PROTOINFO
+			0x2c, 0x00, 0x01, 0x80, // |00044|N-|00001|	|len |flags| type|	  + CTA_PROTOINFO_TCP
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTOINFO_TCP_STATE
+			0x03, 0x00, 0x00, 0x00, // | 03 00 00 00  |	|      data      |
+			0x05, 0x00, 0x02, 0x00, // |00005|--|00002|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_ORIGINAL
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|      data      |
+			0x05, 0x00, 0x03, 0x00, // |00005|--|00003|	|len |flags| type|	    CTA_PROTOINFO_TCP_WSCALE_REPLY
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x06, 0x00, 0x04, 0x00, // |00006|--|00004|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_ORIGINAL
+			0x23, 0x00, 0x00, 0x00, // | 23 00 00 00  |	|      data      |
+			0x06, 0x00, 0x05, 0x00, // |00006|--|00005|	|len |flags| type|	    CTA_PROTOINFO_TCP_FLAGS_REPLY
+			0x23, 0x00, 0x00, 0x00, // | 23 00 00 00  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+			// ----------------	------------------
+			// ----------------	------------------
+			0x9c, 0x00, 0x00, 0x00, // |  0000000156  |	| message length |
+			0x00, 0x01, 0x02, 0x00, // | 00256 | -M-- |	|  type | flags  |
+			0x00, 0x00, 0x00, 0x00, // |  0000000000  |	| sequence number|
+			0xca, 0x24, 0x00, 0x00, // |  0000009418  |	|     port ID    |
+			// ----------------	------------------
+			0x02, 0x00, 0x00, 0x00, // | 02 00 00 00  |	|  extra header  |
+			0x34, 0x00, 0x01, 0x80, // |00052|N-|00001|	|len |flags| type|	+ CTA_TUPLE_ORIG
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	  + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	    CTA_IP_V4_SRC
+			0x55, 0x55, 0x55, 0x55, // | 55 55 55 55  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	    CTA_IP_V4_DST
+			0x66, 0x66, 0x66, 0x66, // | 66 66 66 66  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	  + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	    CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	    CTA_PROTO_SRC_PORT
+			0xca, 0xda, 0x00, 0x00, // | ca da 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	    CTA_PROTO_DST_PORT
+			0x02, 0x02, 0x00, 0x00, // | 02 02 00 00  |	|      data      |
+			0x34, 0x00, 0x02, 0x80, // |00052|N-|00002|	|len |flags| type|	  + CTA_TUPLE_REPLY
+			0x14, 0x00, 0x01, 0x80, // |00020|N-|00001|	|len |flags| type|	    + CTA_TUPLE_IP
+			0x08, 0x00, 0x01, 0x00, // |00008|--|00001|	|len |flags| type|	      CTA_IP_V4_SRC
+			0x66, 0x66, 0x66, 0x66, // | 66 66 66 66  |	|      data      |
+			0x08, 0x00, 0x02, 0x00, // |00008|--|00002|	|len |flags| type|	      CTA_IP_V4_DST
+			0x55, 0x55, 0x55, 0x55, // | 55 55 55 55  |	|      data      |
+			0x1c, 0x00, 0x02, 0x80, // |00028|N-|00002|	|len |flags| type|	    + CTA_TUPLE_PROTO
+			0x05, 0x00, 0x01, 0x00, // |00005|--|00001|	|len |flags| type|	      CTA_PROTO_NUM
+			0x11, 0x00, 0x00, 0x00, // | 11 00 00 00  |	|      data      |
+			0x06, 0x00, 0x02, 0x00, // |00006|--|00002|	|len |flags| type|	      CTA_PROTO_SRC_PORT
+			0x02, 0x02, 0x00, 0x00, // | 02 02 00 00  |	|      data      |
+			0x06, 0x00, 0x03, 0x00, // |00006|--|00003|	|len |flags| type|	      CTA_PROTO_DST_PORT
+			0xca, 0xda, 0x00, 0x00, // | ca da 00 00  |	|      data      |
+			0x08, 0x00, 0x03, 0x00, // |00008|--|00003|	|len |flags| type|	CTA_TUPLE_STATUS
+			0x00, 0x00, 0x00, 0x08, // | 00 00 00 08  |	|      data      |	  IPS_CONFIRMED
+			0x08, 0x00, 0x07, 0x00, // |00008|--|00007|	|len |flags| type|	CTA_TIMEOUT
+			0x00, 0x00, 0x00, 0x13, // | 00 00 00 13  |	|      data      |
+			0x08, 0x00, 0x08, 0x00, // |00008|--|00008|	|len |flags| type|	CTA_MARK
+			0x00, 0x00, 0x00, 0x00, // | 00 00 00 00  |	|      data      |
+			0x08, 0x00, 0x0b, 0x00, // |00008|--|00011|	|len |flags| type|	CTA_USE
+			0x00, 0x00, 0x00, 0x01, // | 00 00 00 01  |	|      data      |
+		} // ----------------	------------------
 	})
 
 	Context("Construct and Destruct", func() {
@@ -607,7 +607,7 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 	})
 	Context("Attr group", func() {
 		var grp1, grp2 *nfct.AttrGrpIpv4
-		BeforeEach(func () {
+		BeforeEach(func() {
 			grp1 = &nfct.AttrGrpIpv4{Src: 0x12345678, Dst: 0x9abcdef0}
 			grp2 = &nfct.AttrGrpIpv4{}
 		})

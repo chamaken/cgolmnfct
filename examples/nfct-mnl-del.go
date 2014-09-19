@@ -11,12 +11,12 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
+	. "cgolmnl/inet"
 	"fmt"
 	"os"
 	"time"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
-	. "cgolmnl/inet"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_DELETE
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_ACK
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_ACK
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 
@@ -53,8 +53,8 @@ func main() {
 	}
 
 	ct.SetAttrU8(nfct.ATTR_L3PROTO, C.AF_INET)
-	ct.SetAttrU32(nfct.ATTR_IPV4_SRC, InetAddr("1.1.1.1"));
-	ct.SetAttrU32(nfct.ATTR_IPV4_DST, InetAddr("2.2.2.2"));
+	ct.SetAttrU32(nfct.ATTR_IPV4_SRC, InetAddr("1.1.1.1"))
+	ct.SetAttrU32(nfct.ATTR_IPV4_DST, InetAddr("2.2.2.2"))
 
 	ct.SetAttrU8(nfct.ATTR_L4PROTO, C.IPPROTO_TCP)
 	ct.SetAttrU16(nfct.ATTR_PORT_SRC, Htons(20))

@@ -1,45 +1,45 @@
 // Go wrapper of libnetfilter_conntrack using cgo
-// 
+//
 // ---- Citing the original libnetfilter_conntrack
-// 
+//
 // libnetfilter_conntrack is a userspace library providing a programming
 // interface (API) to the in-kernel connection tracking state table. The
 // library libnetfilter_conntrack has been previously known as
 // libnfnetlink_conntrack and libctnetlink. This library is currently used by
 // conntrack-tools among many other applications.
-// 
+//
 // libnetfilter_conntrack homepage is:
 //      http://netfilter.org/projects/libnetfilter_conntrack/
-// 
+//
 // Dependencies
 //   libnetfilter_conntrack requires libnfnetlink and a kernel that includes the
 //   nf_conntrack_netlink subsystem (i.e. 2.6.14 or later, >= 2.6.18 recommended).
-// 
+//
 // Main Features
 //  - listing/retrieving entries from the kernel connection tracking table.
 //  - inserting/modifying/deleting entries from the kernel connection tracking
 //    table.
 //  - listing/retrieving entries from the kernel expect table.
 //  - inserting/modifying/deleting entries from the kernel expect table.
-// 
+//
 // Git Tree
 //   The current development version of libnetfilter_conntrack can be accessed at
 //   https://git.netfilter.org/cgi-bin/gitweb.cgi?p=libnetfilter_conntrack.git
-// 
+//
 // Privileges
 //   You need the CAP_NET_ADMIN capability in order to allow your application
 //   to receive events from and to send commands to kernel-space, excepting
 //   the conntrack table dumping operation.
-// 
+//
 // Using libnetfilter_conntrack
 //   To write your own program using libnetfilter_conntrack, you should start by
 //   reading the doxygen documentation (start by \link LibrarySetup \endlink page)
 //   and check examples available under utils/ in the libnetfilter_conntrack
 //   source code tree. You can compile these examples by invoking `make check'.
-// 
+//
 // Authors
 //   libnetfilter_conntrack has been almost entirely written by Pablo Neira Ayuso.
-// 
+//
 // Python Binding
 //   pynetfilter_conntrack is a Python binding of libnetfilter_conntrack written
 //   by Victor Stinner. You can visit his official web site at
@@ -54,8 +54,8 @@ package cgolmnfct
 */
 import "C"
 import (
-	"unsafe"
 	mnl "github.com/chamaken/cgolmnl"
+	"unsafe"
 )
 
 // allocate a new conntrack
@@ -154,7 +154,7 @@ func (ct *Conntrack) Attr(attr_type ConntrackAttr) (unsafe.Pointer, error) {
 
 // get attribute of unsigned 8-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (ct *Conntrack) AttrU8(attr_type ConntrackAttr) (uint8, error) {
@@ -163,7 +163,7 @@ func (ct *Conntrack) AttrU8(attr_type ConntrackAttr) (uint8, error) {
 
 // get attribute of unsigned 16-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (ct *Conntrack) AttrU16(attr_type ConntrackAttr) (uint16, error) {
@@ -172,7 +172,7 @@ func (ct *Conntrack) AttrU16(attr_type ConntrackAttr) (uint16, error) {
 
 // get attribute of unsigned 32-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (ct *Conntrack) AttrU32(attr_type ConntrackAttr) (uint32, error) {
@@ -181,7 +181,7 @@ func (ct *Conntrack) AttrU32(attr_type ConntrackAttr) (uint32, error) {
 
 // get attribute of unsigned 64-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use nfct_attr_is_set.
 func (ct *Conntrack) AttrU64(attr_type ConntrackAttr) (uint64, error) {
@@ -258,17 +258,17 @@ func (ct *Conntrack) AttrGrpUnset(attr_type ConntrackAttrGrp) error {
 
 // print a conntrack object to a buffer
 //
-// If you are listening to events, probably you want to display the message 
+// If you are listening to events, probably you want to display the message
 // type as well. In that case, set the message type parameter to any of the
 // known existing types, ie. NFCT_T_NEW, NFCT_T_UPDATE, NFCT_T_DESTROY.
-// If you pass NFCT_T_UNKNOWN, the message type will not be output. 
+// If you pass NFCT_T_UNKNOWN, the message type will not be output.
 //
 // Currently, the output available are:
 // 	- NFCT_O_DEFAULT: default /proc-like output
 // 	- NFCT_O_XML: XML output
 //
 // The output flags are:
-// 	- NFCT_OF_SHOW_LAYER3: include layer 3 information in the output, 
+// 	- NFCT_OF_SHOW_LAYER3: include layer 3 information in the output,
 // 	this is *only* required by NFCT_O_DEFAULT.
 // 	- NFCT_OF_TIME: display current time.
 // 	- NFCT_OF_ID: display the ID number.
@@ -285,7 +285,7 @@ func (ct *Conntrack) AttrGrpUnset(attr_type ConntrackAttrGrp) error {
 // print the message just after you receive the destroy event. If you want
 // more accurate timestamping, use NFCT_OF_TIMESTAMP.
 //
-// This function returns the size of the information that _would_ have been 
+// This function returns the size of the information that _would_ have been
 // written to the buffer, even if there was no room for it. Thus, the
 // behaviour is similar to snprintf. On error, error is returned.
 func (ct *Conntrack) Snprintf(buf []byte, msg_type ConntrackMsgType, out_type, flags uint) (int, error) {
@@ -303,7 +303,7 @@ func (ct *Conntrack) SnprintfLabels(buf []byte, msg_type, out_type, flags uint, 
 
 // compare two conntrack objects
 //
-// This function only compare attribute set in both objects, by default 
+// This function only compare attribute set in both objects, by default
 // the comparison is not strict, ie. if a certain attribute is not set in one
 // of the objects, then such attribute is not used in the comparison.
 // If you want more strict comparisons, you can use the appropriate flags
@@ -312,10 +312,10 @@ func (ct *Conntrack) SnprintfLabels(buf []byte, msg_type, out_type, flags uint, 
 // The available flags are:
 //
 // 	- NFCT_CMP_STRICT: the compared objects must have the same attributes
-// 	and the same values, otherwise it returns that the objects are 
+// 	and the same values, otherwise it returns that the objects are
 // 	different.
-// 	- NFCT_CMP_MASK: the first object is used as mask, this means that 
-// 	if an attribute is present in ct1 but not in ct2, this function 
+// 	- NFCT_CMP_MASK: the first object is used as mask, this means that
+// 	if an attribute is present in ct1 but not in ct2, this function
 // 	returns that the objects are different.
 // 	- NFCT_CMP_ALL: full comparison of both objects
 // 	- NFCT_CMP_ORIG: it only compares the source and destination address;
@@ -352,7 +352,7 @@ func (ct *Conntrack) Cmp(ct2 *Conntrack, flags uint) int {
 // 	direction. This information is usually composed of: source and
 // 	destination IP address; source and destination ports; layer 3
 // 	and 4 protocol number.
-// 	- NFCT_CP_META: that copies the metainformation 
+// 	- NFCT_CP_META: that copies the metainformation
 // 	(all the attributes >= ATTR_TCP_STATE)
 //	- NFCT_CP_OVERRIDE: changes the default behaviour of nfct_copy() since
 //	it overrides the destination object. After the copy, the destination
@@ -375,7 +375,7 @@ func NewFilter() (*Filter, error) {
 
 // destroy a filter
 //
-// This function releases the memory that is used by the filter object. 
+// This function releases the memory that is used by the filter object.
 // However, please note that this function does *not* detach an already
 // attached filter.
 func (filter *Filter) Destroy() {
@@ -384,7 +384,7 @@ func (filter *Filter) Destroy() {
 
 // add a filter attribute of the filter object
 //
-// Limitations: You can add up to 127 IPv4 addresses and masks for 
+// Limitations: You can add up to 127 IPv4 addresses and masks for
 // NFCT_FILTER_SRC_IPV4 and, similarly, 127 for NFCT_FILTER_DST_IPV4.
 func (filter *Filter) AddAttr(attr_type FilterAttr, value unsafe.Pointer) error {
 	return filterAddAttr(filter, attr_type, value)
@@ -393,13 +393,13 @@ func (filter *Filter) AddAttr(attr_type FilterAttr, value unsafe.Pointer) error 
 // add an u32 filter attribute of the filter object
 //
 // Limitations: You can add up to 255 protocols which is a reasonable limit.
-func (filter *Filter) AddAttrU32(attr FilterAttr, value uint32)	error {
+func (filter *Filter) AddAttrU32(attr FilterAttr, value uint32) error {
 	return filterAddAttrU32(filter, attr, value)
 }
 
 // set the filter logic for an attribute type
 //
-// You can only use this function once to set the filtering logic for 
+// You can only use this function once to set the filtering logic for
 // one attribute. You can define two logics: NFCT_FILTER_POSITIVE_LOGIC
 // that accept events that match the filter, and NFCT_FILTER_NEGATIVE_LOGIC
 // that rejects events that match the filter. Default filtering logic is
@@ -446,7 +446,6 @@ func NewLabelmap(mapfile string) (*Labelmap, error) {
 func (m *Labelmap) Destroy() {
 	labelmapDestroy(m)
 }
-
 
 // duplicate a bitmask object
 //
@@ -495,7 +494,6 @@ func NewBitmask(max uint) (*Bitmask, error) {
 func (b *Bitmask) Destroy() {
 	bitmaskDestroy(b)
 }
-
 
 // build a netlink message from a conntrack object
 func (ct *Conntrack) NlmsgBuild(nlh *mnl.Nlmsghdr) (int, error) {
@@ -604,7 +602,7 @@ func (exp *Expect) Attr(attr_type ExpectAttr) (unsafe.Pointer, error) {
 
 // get attribute of unsigned 8-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (exp *Expect) AttrU8(attr_type ExpectAttr) (uint8, error) {
@@ -613,7 +611,7 @@ func (exp *Expect) AttrU8(attr_type ExpectAttr) (uint8, error) {
 
 // get attribute of unsigned 16-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (exp *Expect) AttrU16(attr_type ExpectAttr) (uint16, error) {
@@ -622,7 +620,7 @@ func (exp *Expect) AttrU16(attr_type ExpectAttr) (uint16, error) {
 
 // get attribute of unsigned 32-bits long
 //
-// Returns the value of the requested attribute, if the attribute is not 
+// Returns the value of the requested attribute, if the attribute is not
 // set, 0 is returned. In order to check if the attribute is set or not,
 // use AttrIsSet.
 func (exp *Expect) AttrU32(attr_type ExpectAttr) (uint32, error) {
@@ -644,15 +642,15 @@ func (exp *Expect) AttrUnset(attr_type ExpectAttr) error {
 
 // print a conntrack object to a buffer
 //
-// If you are listening to events, probably you want to display the message 
+// If you are listening to events, probably you want to display the message
 // type as well. In that case, set the message type parameter to any of the
 // known existing types, ie. NFEXP_T_NEW, NFEXP_T_UPDATE, NFEXP_T_DESTROY.
-// If you pass NFEXP_T_UNKNOWN, the message type will not be output. 
-// 
+// If you pass NFEXP_T_UNKNOWN, the message type will not be output.
+//
 // Currently, the output available are:
 // 	- NFEXP_O_DEFAULT: default /proc-like output
 // 	- NFEXP_O_XML: XML output
-// 
+//
 // The output flags are:
 // 	- NFEXP_O_LAYER: include layer 3 information in the output, this is
 // 			*only* required by NFEXP_O_DEFAULT.

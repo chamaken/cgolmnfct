@@ -11,12 +11,12 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
 	"fmt"
 	"os"
-	"time"
 	"syscall"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
+	"time"
 )
 
 func print_label(ct *nfct.Conntrack, labelmap *nfct.Labelmap) {
@@ -81,7 +81,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_GET
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_DUMP
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_DUMP
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 

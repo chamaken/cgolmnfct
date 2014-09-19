@@ -11,12 +11,12 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
 	"fmt"
 	"os"
-	"time"
 	"syscall"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
+	"time"
 )
 
 func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
@@ -59,7 +59,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK_EXP << 8) | C.IPCTNL_MSG_EXP_GET
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_DUMP|C.NLM_F_ACK
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_DUMP | C.NLM_F_ACK
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 

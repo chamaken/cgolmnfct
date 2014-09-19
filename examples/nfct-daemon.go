@@ -13,6 +13,9 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
+	"cgolmnl/inet"
 	"fmt"
 	"net"
 	"os"
@@ -20,9 +23,6 @@ import (
 	"syscall"
 	"time"
 	"unsafe"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
-	"cgolmnl/inet"
 )
 
 // To make it map key - must be comperable
@@ -52,30 +52,37 @@ func NewLdIP(family uint8, p unsafe.Pointer) LdIP {
 }
 
 type Tuple struct {
-	Server, Client		LdIP
-	L4proto, L3proto	uint8
-	Port			uint16 // TYPE in ICMP - u8
+	Server, Client   LdIP
+	L4proto, L3proto uint8
+	Port             uint16 // TYPE in ICMP - u8
 }
 
 func (t Tuple) String() string {
 	var l4proto string
 	switch t.L4proto {
-	case C.IPPROTO_ICMP:	l4proto = fmt.Sprintf("ICMP(%d)", t.Port)
-	case C.IPPROTO_TCP:	l4proto = fmt.Sprintf("TCP(%d)", inet.Ntohs(t.Port))
-	case C.IPPROTO_UDP:	l4proto = fmt.Sprintf("UDP(%d)", inet.Ntohs(t.Port))
-	case C.IPPROTO_DCCP:	l4proto = fmt.Sprintf("DCCP(%d)", inet.Ntohs(t.Port))
-	case C.IPPROTO_SCTP:	l4proto = fmt.Sprintf("SCTP(%d)", inet.Ntohs(t.Port))
-	case C.IPPROTO_UDPLITE:	l4proto = fmt.Sprintf("UDPLITE(%d)", inet.Ntohs(t.Port))
-	default:		l4proto = fmt.Sprintf("unknown(%d)", t.L4proto)
+	case C.IPPROTO_ICMP:
+		l4proto = fmt.Sprintf("ICMP(%d)", t.Port)
+	case C.IPPROTO_TCP:
+		l4proto = fmt.Sprintf("TCP(%d)", inet.Ntohs(t.Port))
+	case C.IPPROTO_UDP:
+		l4proto = fmt.Sprintf("UDP(%d)", inet.Ntohs(t.Port))
+	case C.IPPROTO_DCCP:
+		l4proto = fmt.Sprintf("DCCP(%d)", inet.Ntohs(t.Port))
+	case C.IPPROTO_SCTP:
+		l4proto = fmt.Sprintf("SCTP(%d)", inet.Ntohs(t.Port))
+	case C.IPPROTO_UDPLITE:
+		l4proto = fmt.Sprintf("UDPLITE(%d)", inet.Ntohs(t.Port))
+	default:
+		l4proto = fmt.Sprintf("unknown(%d)", t.L4proto)
 	}
-	
+
 	return fmt.Sprintf("%s:%s << %s",
 		t.Server.ToIP(t.L3proto), l4proto, t.Client.ToIP(t.L3proto))
 }
 
 type Counter struct {
-	Pkts, Bytes		uint64
-	Deleting		bool
+	Pkts, Bytes uint64
+	Deleting    bool
 }
 
 var nstats = make(map[Tuple]*Counter)
@@ -133,10 +140,14 @@ func make_tuple(ct *nfct.Conntrack) (*Tuple, error) {
 		} else {
 			t.Port = uint16(icmp_type)
 		}
-	case C.IPPROTO_TCP: fallthrough
-	case C.IPPROTO_UDP: fallthrough
-	case C.IPPROTO_DCCP: fallthrough
-	case C.IPPROTO_SCTP: fallthrough
+	case C.IPPROTO_TCP:
+		fallthrough
+	case C.IPPROTO_UDP:
+		fallthrough
+	case C.IPPROTO_DCCP:
+		fallthrough
+	case C.IPPROTO_SCTP:
+		fallthrough
 	case C.IPPROTO_UDPLITE:
 		if t.Port, err = ct.AttrU16(nfct.ATTR_PORT_DST); err != nil {
 			fmt.Fprintf(os.Stderr, "DST PORT - no ATTR_PORT_DST: %s\n", err)
@@ -172,10 +183,10 @@ func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 
 	counter := nstats[*t]
 	// NF_NETLINK_CONNTRACK_DESTROY / NFCT_T_DESTROY
-	if nlh.Type & 0xFF == C.IPCTNL_MSG_CT_DELETE {
+	if nlh.Type&0xFF == C.IPCTNL_MSG_CT_DELETE {
 		counter.Deleting = true
 	}
-	
+
 	if counter != nil {
 		counter.Pkts = counter.Pkts + orig_packets + repl_packets
 		counter.Bytes = counter.Bytes + orig_bytes + repl_bytes
@@ -195,9 +206,9 @@ func handle(nl *mnl.Socket) int {
 		// It only happens if NETLINK_NO_ENOBUFS is not set, it means
 		// we are leaking statistics.
 		if err == syscall.ENOBUFS {
-			fmt.Fprintf(os.Stderr, "The daemon has hit ENOBUFS, you can " +
-				"increase the size of your receiver " +
-				"buffer to mitigate this or enable " +
+			fmt.Fprintf(os.Stderr, "The daemon has hit ENOBUFS, you can "+
+				"increase the size of your receiver "+
+				"buffer to mitigate this or enable "+
 				"reliable delivery.\n")
 		} else {
 			fmt.Fprintf(os.Stderr, "mnl_socket_recvfrom: %s\n", err)
@@ -311,7 +322,7 @@ func main() {
 	ticker := time.NewTicker(time.Second * time.Duration(secs))
 	go func() {
 		for _ = range ticker.C {
-			if _, err := nl.SendNlmsg(nlh);  err != nil {
+			if _, err := nl.SendNlmsg(nlh); err != nil {
 				fmt.Fprintf(os.Stderr, "mnl_socket_sendto: %s\n", err)
 				os.Exit(C.EXIT_FAILURE)
 			}
@@ -338,5 +349,5 @@ func main() {
 				show_nstats()
 			}
 		}
-	}		
+	}
 }

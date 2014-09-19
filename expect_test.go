@@ -106,7 +106,7 @@ var _ = Describe("Cpylmnfct Expect", func() {
 			ret, err := exp.AttrU16(nfct.ATTR_EXP_ZONE)
 			Expect(err).To(BeNil())
 			Expect(ret).To(Equal(uint16(0x3333)))
-			
+
 			err = exp.SetAttrU16(nfct.ATTR_EXP_MAX, 0x3333)
 			Expect(err).To(Equal(syscall.EINVAL))
 			_, err = exp.AttrU16(nfct.ATTR_EXP_MAX)
@@ -120,7 +120,7 @@ var _ = Describe("Cpylmnfct Expect", func() {
 			ret, err := exp.AttrU32(nfct.ATTR_EXP_CLASS)
 			Expect(err).To(BeNil())
 			Expect(ret).To(Equal(uint32(0x13135757)))
-			
+
 			err = exp.SetAttrU32(nfct.ATTR_EXP_MAX, 0x13135757)
 			Expect(err).To(Equal(syscall.EINVAL))
 			_, err = exp.AttrU32(nfct.ATTR_EXP_MAX)

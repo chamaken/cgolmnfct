@@ -1,10 +1,10 @@
 package cgolmnfct
 
 import (
+	mnl "github.com/chamaken/cgolmnl"
 	"reflect"
 	"syscall"
 	"unsafe"
-	mnl "github.com/chamaken/cgolmnl"
 )
 
 /*
@@ -15,12 +15,12 @@ import (
 */
 import "C"
 
-type Conntrack	C.struct_nf_conntrack
-type Bitmask	C.struct_nfct_bitmask
-type Labelmap	C.struct_nfct_labelmap
-type Filter	C.struct_nfct_filter
-// all represented [0]byte
+type Conntrack C.struct_nf_conntrack
+type Bitmask C.struct_nfct_bitmask
+type Labelmap C.struct_nfct_labelmap
+type Filter C.struct_nfct_filter
 
+// all represented [0]byte
 
 // struct nf_conntrack *nfct_new(void)
 func conntrackNew() (*Conntrack, error) {
@@ -283,7 +283,7 @@ func conntrackAttrGrpUnset(ct *Conntrack, attr_type ConntrackAttrGrp) error {
 //		     unsigned int flags)
 func conntrackSnprintf(buf []byte, ct *Conntrack, msg_type ConntrackMsgType, out_type, flags uint) (int, error) {
 	ret, err := C.nfct_snprintf((*C.char)(unsafe.Pointer(&buf[0])), C.uint(len(buf)), (*C.struct_nf_conntrack)(ct),
-				    C.uint(msg_type), C.uint(out_type), C.uint(flags))
+		C.uint(msg_type), C.uint(out_type), C.uint(flags))
 	return int(ret), err
 }
 
@@ -297,7 +297,7 @@ func conntrackSnprintf(buf []byte, ct *Conntrack, msg_type ConntrackMsgType, out
 func conntrackSnprintfLabels(buf []byte, ct *Conntrack, msg_type, out_type, flags uint,
 	label_map *Labelmap) (int, error) {
 	ret, err := C.nfct_snprintf_labels((*C.char)(unsafe.Pointer(&buf[0])), C.uint(len(buf)), (*C.struct_nf_conntrack)(ct),
-					   C.uint(msg_type), C.uint(out_type), C.uint(flags), (*C.struct_nfct_labelmap)(label_map))
+		C.uint(msg_type), C.uint(out_type), C.uint(flags), (*C.struct_nfct_labelmap)(label_map))
 	return int(ret), err
 }
 
@@ -381,7 +381,7 @@ func filterAttach(fd int, filter *Filter) error {
 // int nfct_filter_detach(int fd);
 
 // detach an existing filter
-func FilterDetach(fd int)  error {
+func FilterDetach(fd int) error {
 	_, err := C.nfct_filter_detach(C.int(fd))
 	return err
 }

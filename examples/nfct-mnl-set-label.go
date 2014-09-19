@@ -11,17 +11,17 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
 	"fmt"
 	"os"
 	"strconv"
 	"syscall"
 	"time"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
 )
 
 type callbackArgs struct {
-	nl *mnl.Socket
+	nl  *mnl.Socket
 	seq uint32
 	bit int
 }
@@ -62,7 +62,7 @@ func set_label(ct *nfct.Conntrack, cbargs *callbackArgs) {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_NEW
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_CREATE
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_CREATE
 	nlh.Seq = cbargs.seq
 
 	nfh := (*Nfgenmsg)(nlh.PutExtraHeader(SizeofNfgenmsg))
@@ -163,7 +163,7 @@ func main() {
 
 	nlh, _ := mnl.NlmsgPutHeaderBytes(buf)
 	nlh.Type = (C.NFNL_SUBSYS_CTNETLINK << 8) | C.IPCTNL_MSG_CT_GET
-	nlh.Flags = C.NLM_F_REQUEST|C.NLM_F_DUMP
+	nlh.Flags = C.NLM_F_REQUEST | C.NLM_F_DUMP
 	seq := uint32(time.Now().Unix())
 	nlh.Seq = seq
 
@@ -195,4 +195,3 @@ func main() {
 	cbargs.nl.Close()
 	nl.Close()
 }
-	

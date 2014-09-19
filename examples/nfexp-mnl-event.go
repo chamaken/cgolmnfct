@@ -11,20 +11,20 @@ package main
 import "C"
 
 import (
+	nfct "cgolmnfct"
+	mnl "cgolmnl"
 	"fmt"
 	"os"
 	"syscall"
-	mnl "cgolmnl"
-	nfct "cgolmnfct"
 )
 
 func data_cb(nlh *mnl.Nlmsghdr, data interface{}) (int, syscall.Errno) {
 	msg_type := nfct.NFCT_T_UNKNOWN
 	buf := make([]byte, 4096)
 
-	switch(nlh.Type & 0xFF) {
+	switch nlh.Type & 0xFF {
 	case C.IPCTNL_MSG_EXP_NEW:
-		if nlh.Flags & (C.NLM_F_CREATE|C.NLM_F_EXCL) != 0 {
+		if nlh.Flags&(C.NLM_F_CREATE|C.NLM_F_EXCL) != 0 {
 			msg_type = nfct.NFCT_T_NEW
 		} else {
 			msg_type = nfct.NFCT_T_UPDATE
@@ -59,8 +59,8 @@ func main() {
 	}
 	defer nl.Close()
 
-	if err = nl.Bind(C.NF_NETLINK_CONNTRACK_EXP_NEW |
-		C.NF_NETLINK_CONNTRACK_EXP_UPDATE |
+	if err = nl.Bind(C.NF_NETLINK_CONNTRACK_EXP_NEW|
+		C.NF_NETLINK_CONNTRACK_EXP_UPDATE|
 		C.NF_NETLINK_CONNTRACK_EXP_DESTROY,
 		mnl.MNL_SOCKET_AUTOPID); err != nil {
 		fmt.Fprintf(os.Stderr, "mnl_socket_bind: %s\n", err)
