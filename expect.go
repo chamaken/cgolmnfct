@@ -29,7 +29,7 @@ func expectDestroy(exp *Expect) {
 
 // struct nf_expect *nfexp_clone(const struct nf_expect *exp)
 func expectClone(exp *Expect) (*Expect, error) {
-	ret, err := C.nfexp_clone((*C.struct_nfexpect)(exp))
+	ret, err := C.nfexp_clone((*C.struct_nf_expect)(exp))
 	return (*Expect)(ret), err
 }
 
