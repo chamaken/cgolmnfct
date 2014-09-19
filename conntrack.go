@@ -453,6 +453,16 @@ func bitmaskDestroy(b *Bitmask) {
 	C.nfct_bitmask_destroy((*C.struct_nfct_bitmask)(b))
 }
 
+// void nfct_bitmask_clear(struct nfct_bitmask *b)
+func bitmaskClear(b *Bitmask) {
+	C.nfct_bitmask_clear((*C.struct_nfct_bitmask)(b))
+}
+
+// bool nfct_bitmask_equal(const struct nfct_bitmask *b1, const struct nfct_bitmask *b2)
+func bitmaskEqual(b1, b2 *Bitmask) bool {
+	return (bool)(C.nfct_bitmask_equal((*C.struct_nfct_bitmask)(b1), (*C.struct_nfct_bitmask)(b2)))
+}
+
 // int nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct);
 func conntrackNlmsgBuild(nlh *mnl.Nlmsghdr, ct *Conntrack) (int, error) {
 	ret, err := C.nfct_nlmsg_build((*C.struct_nlmsghdr)(unsafe.Pointer(nlh)), (*C.struct_nf_conntrack)(ct))
