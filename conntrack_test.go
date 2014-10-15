@@ -726,4 +726,24 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 			Expect(b).To(Equal(nlmsgbuf11))
 		})
 	})
+	Context("Only create and add event filter", func() {
+		It("should create new filter", func() {
+			filter, err := nfct.NewFilter()
+			defer filter.Destroy()
+			Expect(err).To(BeNil())
+		})
+		It("should create new filter", func() {
+			filter, err := nfct.NewFilter()
+			defer filter.Destroy()
+			Expect(err).To(BeNil())
+		})
+		It("should add dump mark obj to event filter", func() {
+			filter, err := nfct.NewFilter()
+			defer filter.Destroy()
+			Expect(err).To(BeNil())
+			mark := nfct.FilterDumpMark{Val: 0x12345678, Mask: 0xffffffff}
+			err = filter.AddAttrPtr(nfct.NFCT_FILTER_MARK, &mark)
+			Expect(err).To(BeNil())
+		})
+	})
 })

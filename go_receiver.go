@@ -390,6 +390,13 @@ func (filter *Filter) AddAttr(attr_type FilterAttr, value unsafe.Pointer) error 
 	return filterAddAttr(filter, attr_type, value)
 }
 
+// add a filter attribute of the filter object
+//
+// This function change value type to just pointer not unsafe by wrapping raw AddAttr.
+func (filter *Filter) AddAttrPtr(attr_type FilterAttr, value interface{}) error {
+	return filterAddAttrPtr(filter, attr_type, value)
+}
+
 // add an u32 filter attribute of the filter object
 //
 // Limitations: You can add up to 255 protocols which is a reasonable limit.
