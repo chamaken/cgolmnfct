@@ -477,7 +477,8 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 		It("should same - set/get", func() {
 			ct, _ := nfct.NewConntrack()
 			defer ct.Destroy()
-			// ct.SetAttrU32(nfct.ATTR_STATUS, IPS_SRC_NAT_DONE)
+			// ct.SetAttrU32(nfct.ATTR_STATUS, uint32(nfct.IPS_SRC_NAT_DONE))
+			ct.SetAttrU8(nfct.ATTR_ORIG_L3PROTO, 2) // AF_INET
 			ct.SetAttrU32(nfct.ATTR_REPL_IPV4_DST, 1)
 			opt, err := ct.Objopt(nfct.NFCT_GOPT_IS_SNAT)
 			Expect(err).To(BeNil())
@@ -704,12 +705,12 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 		It("should have same value", func() {
 			ct, _ := nfct.NewConntrack()
 			defer ct.Destroy()
-			nlh := mnl.NlmsghdrBytes(nlmsgbuf10)
+			nlh, _ := mnl.NewNlmsgBytes(nlmsgbuf10)
 			ret, err := ct.NlmsgParse(nlh)
 			Expect(ret).To(Equal(0))
 			Expect(err).To(BeNil())
 
-			nlh, _ = mnl.PutNewNlmsghdr(1024)
+			nlh, _ = mnl.NewNlmsg(1024)
 			nlh.Type = (NFNL_SUBSYS_CTNETLINK << 8) | IPCTNL_MSG_CT_DELETE
 			nlh.Flags = 0
 			nlh.Seq = 0
@@ -719,9 +720,22 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 			nfh.Version = NFNETLINK_V0
 			nfh.Res_id = 0
 
+			ct.SetAttrU8(nfct.ATTR_ORIG_L3PROTO, 2)
+			ct.SetAttrU32(nfct.ATTR_ORIG_IPV4_SRC, 0x4030201)
+			ct.SetAttrU32(nfct.ATTR_ORIG_IPV4_DST, 0xfcfdfeff)
+			ct.SetAttrU16(nfct.ATTR_ORIG_L4PROTO, 17)
+			ct.SetAttrU16(nfct.ATTR_ORIG_PORT_SRC, 0x8ff8)
+			ct.SetAttrU16(nfct.ATTR_ORIG_PORT_DST, 0x3500);
+			ct.SetAttrU8(nfct.ATTR_REPL_L3PROTO, 2)
+			ct.SetAttrU32(nfct.ATTR_REPL_IPV4_SRC, 0xfcfdfeff)
+			ct.SetAttrU32(nfct.ATTR_REPL_IPV4_DST, 0x4030201)
+			ct.SetAttrU16(nfct.ATTR_REPL_L4PROTO, 17)
+			ct.SetAttrU16(nfct.ATTR_REPL_PORT_SRC, 0x3500)
+			ct.SetAttrU16(nfct.ATTR_REPL_PORT_DST, 0x8ff8)
+			ct.SetAttrU32(nfct.ATTR_STATUS, uint32(nfct.IPS_CONFIRMED))
 			ret, err = ct.NlmsgBuild(nlh)
-			Expect(ret).To(Equal(0))
 			Expect(err).To(BeNil())
+			Expect(ret).To(Equal(0))
 			b, _ := nlh.MarshalBinary()
 			Expect(b).To(Equal(nlmsgbuf11))
 		})

@@ -513,12 +513,12 @@ func (b *Bitmask) Equal(b2 *Bitmask) bool {
 }
 
 // build a netlink message from a conntrack object
-func (ct *Conntrack) NlmsgBuild(nlh *mnl.Nlmsghdr) (int, error) {
+func (ct *Conntrack) NlmsgBuild(nlh *mnl.Nlmsg) (int, error) {
 	return conntrackNlmsgBuild(nlh, ct)
 }
 
 // translate a netlink message to a conntrack object
-func (ct *Conntrack) NlmsgParse(nlh *mnl.Nlmsghdr) (int, error) {
+func (ct *Conntrack) NlmsgParse(nlh *mnl.Nlmsg) (int, error) {
 	return conntrackNlmsgParse(nlh, ct)
 }
 
@@ -676,11 +676,11 @@ func (exp *Expect) Snprintf(buf []byte, msg_type ConntrackMsgType, out_type, fla
 }
 
 // build a netlink message from a conntrack object
-func (exp *Expect) NlmsgBuild(nlh *mnl.Nlmsghdr) (int, error) {
+func (exp *Expect) NlmsgBuild(nlh *mnl.Nlmsg) (int, error) {
 	return expectNlmsgBuild(nlh, exp)
 }
 
 // translate a netlink message to a conntrack object
-func (exp *Expect) NlmsgParse(nlh *mnl.Nlmsghdr) (int, error) {
+func (exp *Expect) NlmsgParse(nlh *mnl.Nlmsg) (int, error) {
 	return expectNlmsgParse(nlh, exp)
 }
