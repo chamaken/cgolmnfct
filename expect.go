@@ -151,13 +151,17 @@ func expectSnprintf(buf []byte, exp *Expect, msg_type ConntrackMsgType, out_type
 
 // int
 // nfexp_nlmsg_build(struct nlmsghdr *nlh, const struct nf_expect *exp)
-func expectNlmsgBuild(nlh *mnl.Nlmsghdr, exp *Expect) (int, error) {
-	ret, err := C.nfexp_nlmsg_build((*C.struct_nlmsghdr)(unsafe.Pointer(nlh)), (*C.struct_nf_expect)(exp))
+func expectNlmsgBuild(nlh *mnl.Nlmsg, exp *Expect) (int, error) {
+	ret, err := C.nfexp_nlmsg_build(
+		(*C.struct_nlmsghdr)(unsafe.Pointer(nlh.Nlmsghdr)),
+		(*C.struct_nf_expect)(exp))
 	return int(ret), err
 }
 
 // int nfexp_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_expect *exp)
-func expectNlmsgParse(nlh *mnl.Nlmsghdr, exp *Expect) (int, error) {
-	ret, err := C.nfexp_nlmsg_parse((*C.struct_nlmsghdr)(unsafe.Pointer(nlh)), (*C.struct_nf_expect)(exp))
+func expectNlmsgParse(nlh *mnl.Nlmsg, exp *Expect) (int, error) {
+	ret, err := C.nfexp_nlmsg_parse(
+		(*C.struct_nlmsghdr)(unsafe.Pointer(nlh.Nlmsghdr)),
+		(*C.struct_nf_expect)(exp))
 	return int(ret), err
 }

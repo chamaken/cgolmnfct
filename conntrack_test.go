@@ -704,12 +704,12 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 		It("should have same value", func() {
 			ct, _ := nfct.NewConntrack()
 			defer ct.Destroy()
-			nlh := mnl.NlmsghdrBytes(nlmsgbuf10)
+			nlh, _ := mnl.NewNlmsgBytes(nlmsgbuf10)
 			ret, err := ct.NlmsgParse(nlh)
 			Expect(ret).To(Equal(0))
 			Expect(err).To(BeNil())
 
-			nlh, _ = mnl.PutNewNlmsghdr(1024)
+			nlh, _ = mnl.NewNlmsg(1024)
 			nlh.Type = (NFNL_SUBSYS_CTNETLINK << 8) | IPCTNL_MSG_CT_DELETE
 			nlh.Flags = 0
 			nlh.Seq = 0
@@ -720,8 +720,8 @@ var _ = Describe("Cpylmnfct Conntrack", func() {
 			nfh.Res_id = 0
 
 			ret, err = ct.NlmsgBuild(nlh)
-			Expect(ret).To(Equal(0))
 			Expect(err).To(BeNil())
+			Expect(ret).To(Equal(0))
 			b, _ := nlh.MarshalBinary()
 			Expect(b).To(Equal(nlmsgbuf11))
 		})

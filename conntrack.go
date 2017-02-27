@@ -464,14 +464,18 @@ func bitmaskEqual(b1, b2 *Bitmask) bool {
 }
 
 // int nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct);
-func conntrackNlmsgBuild(nlh *mnl.Nlmsghdr, ct *Conntrack) (int, error) {
-	ret, err := C.nfct_nlmsg_build((*C.struct_nlmsghdr)(unsafe.Pointer(nlh)), (*C.struct_nf_conntrack)(ct))
+func conntrackNlmsgBuild(nlh *mnl.Nlmsg, ct *Conntrack) (int, error) {
+	ret, err := C.nfct_nlmsg_build(
+		(*C.struct_nlmsghdr)(unsafe.Pointer(nlh.Nlmsghdr)),
+		(*C.struct_nf_conntrack)(ct))
 	return int(ret), err
 }
 
 // int nfct_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_conntrack *ct);
-func conntrackNlmsgParse(nlh *mnl.Nlmsghdr, ct *Conntrack) (int, error) {
-	ret, err := C.nfct_nlmsg_parse((*C.struct_nlmsghdr)(unsafe.Pointer(nlh)), (*C.struct_nf_conntrack)(ct))
+func conntrackNlmsgParse(nlh *mnl.Nlmsg, ct *Conntrack) (int, error) {
+	ret, err := C.nfct_nlmsg_parse(
+		(*C.struct_nlmsghdr)(unsafe.Pointer(nlh.Nlmsghdr)),
+		(*C.struct_nf_conntrack)(ct))
 	return int(ret), err
 }
 
