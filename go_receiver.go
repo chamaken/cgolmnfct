@@ -502,16 +502,6 @@ func (b *Bitmask) Destroy() {
 	bitmaskDestroy(b)
 }
 
-// clear a bitmask object
-func (b *Bitmask) Clear() {
-	bitmaskClear(b)
-}
-
-// compare two bitmask objects
-func (b *Bitmask) Equal(b2 *Bitmask) bool {
-	return bitmaskEqual(b, b2)
-}
-
 // build a netlink message from a conntrack object
 func (ct *Conntrack) NlmsgBuild(nlh *mnl.Nlmsg) (int, error) {
 	return conntrackNlmsgBuild(nlh, ct)

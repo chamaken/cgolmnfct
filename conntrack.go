@@ -118,7 +118,7 @@ func conntrackSetAttrU8(ct *Conntrack, attr_type ConntrackAttr, value uint8) err
 	if attr_type >= ATTR_MAX {
 		return syscall.EINVAL
 	}
-	C.nfct_set_attr_u8((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.u_int8_t(value))
+	C.nfct_set_attr_u8((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.uint8_t(value))
 	return nil
 }
 
@@ -129,7 +129,7 @@ func conntrackSetAttrU16(ct *Conntrack, attr_type ConntrackAttr, value uint16) e
 	if attr_type >= ATTR_MAX {
 		return syscall.EINVAL
 	}
-	C.nfct_set_attr_u16((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.u_int16_t(value))
+	C.nfct_set_attr_u16((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.uint16_t(value))
 	return nil
 }
 
@@ -140,7 +140,7 @@ func conntrackSetAttrU32(ct *Conntrack, attr_type ConntrackAttr, value uint32) e
 	if attr_type >= ATTR_MAX {
 		return syscall.EINVAL
 	}
-	C.nfct_set_attr_u32((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.u_int32_t(value))
+	C.nfct_set_attr_u32((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.uint32_t(value))
 	return nil
 }
 
@@ -151,7 +151,7 @@ func conntrackSetAttrU64(ct *Conntrack, attr_type ConntrackAttr, value uint64) e
 	if attr_type >= ATTR_MAX {
 		return syscall.EINVAL
 	}
-	C.nfct_set_attr_u64((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.u_int64_t(value))
+	C.nfct_set_attr_u64((*C.struct_nf_conntrack)(ct), C.enum_nf_conntrack_attr(attr_type), C.uint64_t(value))
 	return nil
 }
 
@@ -360,7 +360,7 @@ func filterAddAttrU32(filter *Filter, attr FilterAttr, value uint32) error {
 	if attr >= NFCT_FILTER_MAX {
 		return syscall.EINVAL
 	}
-	C.nfct_filter_add_attr_u32((*C.struct_nfct_filter)(filter), C.enum_nfct_filter_attr(attr), C.u_int32_t(value))
+	C.nfct_filter_add_attr_u32((*C.struct_nfct_filter)(filter), C.enum_nfct_filter_attr(attr), C.uint32_t(value))
 	return nil
 }
 
@@ -451,16 +451,6 @@ func bitmaskMaxbit(b *Bitmask) uint {
 // void nfct_bitmask_destroy(struct nfct_bitmask *b)
 func bitmaskDestroy(b *Bitmask) {
 	C.nfct_bitmask_destroy((*C.struct_nfct_bitmask)(b))
-}
-
-// void nfct_bitmask_clear(struct nfct_bitmask *b)
-func bitmaskClear(b *Bitmask) {
-	C.nfct_bitmask_clear((*C.struct_nfct_bitmask)(b))
-}
-
-// bool nfct_bitmask_equal(const struct nfct_bitmask *b1, const struct nfct_bitmask *b2)
-func bitmaskEqual(b1, b2 *Bitmask) bool {
-	return (bool)(C.nfct_bitmask_equal((*C.struct_nfct_bitmask)(b1), (*C.struct_nfct_bitmask)(b2)))
 }
 
 // int nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct);

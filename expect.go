@@ -66,7 +66,7 @@ func expectSetAttrU8(exp *Expect, attr_type ExpectAttr, value uint8) error {
 	if attr_type >= ATTR_EXP_MAX {
 		return syscall.EINVAL
 	}
-	C.nfexp_set_attr_u8((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int8_t)(value))
+	C.nfexp_set_attr_u8((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.uint8_t)(value))
 	return nil
 }
 
@@ -77,7 +77,7 @@ func expectSetAttrU16(exp *Expect, attr_type ExpectAttr, value uint16) error {
 	if attr_type >= ATTR_EXP_MAX {
 		return syscall.EINVAL
 	}
-	C.nfexp_set_attr_u16((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int16_t)(value))
+	C.nfexp_set_attr_u16((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.uint16_t)(value))
 	return nil
 }
 
@@ -88,7 +88,7 @@ func expectSetAttrU32(exp *Expect, attr_type ExpectAttr, value uint32) error {
 	if attr_type >= ATTR_EXP_MAX {
 		return syscall.EINVAL
 	}
-	C.nfexp_set_attr_u32((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.u_int32_t)(value))
+	C.nfexp_set_attr_u32((*C.struct_nf_expect)(exp), C.enum_nf_expect_attr(attr_type), (C.uint32_t)(value))
 	return nil
 }
 
