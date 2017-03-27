@@ -14,7 +14,8 @@
 #include <netinet/in.h>
 #include <libnfnetlink/linux_nfnetlink.h>
 #include <libnfnetlink/libnfnetlink.h>
-#include <libnetfilter_conntrack/linux_nfnetlink_conntrack.h> 
+#include <libnetfilter_conntrack/linux_nfnetlink_conntrack.h>
+#include <libnetfilter_conntrack/linux_nf_conntrack_common.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,9 +39,9 @@ struct nfct_handle;
 /*
  * [Open|close] a conntrack handler
  */
-extern struct nfct_handle *nfct_open(u_int8_t, unsigned);
+extern struct nfct_handle *nfct_open(uint8_t, unsigned);
 extern struct nfct_handle *nfct_open_nfnl(struct nfnl_handle *nfnlh,
-					  u_int8_t subsys_id,
+					  uint8_t subsys_id,
 					  unsigned int subscriptions);
 extern int nfct_close(struct nfct_handle *cth);
 
@@ -136,6 +137,10 @@ enum nf_conntrack_attr {
 	ATTR_HELPER_INFO,			/* variable length */
 	ATTR_CONNLABELS,			/* variable length */
 	ATTR_CONNLABELS_MASK,			/* variable length */
+	ATTR_ORIG_ZONE,				/* u16 bits */
+	ATTR_REPL_ZONE,				/* u16 bits */
+	ATTR_SNAT_IPV6,				/* u128 bits */
+	ATTR_DNAT_IPV6,				/* u128 bits */
 	ATTR_MAX
 };
 
@@ -161,31 +166,31 @@ enum nf_conntrack_attr_grp {
 };
 
 struct nfct_attr_grp_ipv4 {
-	u_int32_t src, dst;
+	uint32_t src, dst;
 };
 
 struct nfct_attr_grp_ipv6 {
-	u_int32_t src[4], dst[4];
+	uint32_t src[4], dst[4];
 };
 
 struct nfct_attr_grp_port {
-	u_int16_t sport, dport;
+	uint16_t sport, dport;
 };
 
 struct nfct_attr_grp_icmp {
-	u_int16_t id;
-	u_int8_t code, type;
+	uint16_t id;
+	uint8_t code, type;
 };
 
 struct nfct_attr_grp_ctrs {
-	u_int64_t packets;
-	u_int64_t bytes;
+	uint64_t packets;
+	uint64_t bytes;
 };
 
 union nfct_attr_grp_addr {
-	u_int32_t ip;
-	u_int32_t ip6[4];
-	u_int32_t addr[4];
+	uint32_t ip;
+	uint32_t ip6[4];
+	uint32_t addr[4];
 };
 
 /* message type */
@@ -293,6 +298,7 @@ bool nfct_bitmask_equal(const struct nfct_bitmask *, const struct nfct_bitmask *
 /* connlabel name <-> bit translation mapping */
 struct nfct_labelmap;
 
+const char *nfct_labels_get_path(void);
 struct nfct_labelmap *nfct_labelmap_new(const char *mapfile);
 void nfct_labelmap_destroy(struct nfct_labelmap *map);
 const char *nfct_labelmap_get_name(struct nfct_labelmap *m, unsigned int bit);
@@ -305,19 +311,19 @@ extern void nfct_set_attr(struct nf_conntrack *ct,
 
 extern void nfct_set_attr_u8(struct nf_conntrack *ct,
 			     const enum nf_conntrack_attr type,
-			     u_int8_t value);
+			     uint8_t value);
 
 extern void nfct_set_attr_u16(struct nf_conntrack *ct,
 			      const enum nf_conntrack_attr type,
-			      u_int16_t value);
+			      uint16_t value);
 
 extern void nfct_set_attr_u32(struct nf_conntrack *ct,
 			      const enum nf_conntrack_attr type,
-			      u_int32_t value);
+			      uint32_t value);
 
 extern void nfct_set_attr_u64(struct nf_conntrack *ct,
 			      const enum nf_conntrack_attr type,
-			      u_int64_t value);
+			      uint64_t value);
 
 extern void nfct_set_attr_l(struct nf_conntrack *ct,
 			    const enum nf_conntrack_attr type,
@@ -328,16 +334,16 @@ extern void nfct_set_attr_l(struct nf_conntrack *ct,
 extern const void *nfct_get_attr(const struct nf_conntrack *ct,
 				 const enum nf_conntrack_attr type);
 
-extern u_int8_t nfct_get_attr_u8(const struct nf_conntrack *ct,
+extern uint8_t nfct_get_attr_u8(const struct nf_conntrack *ct,
 				 const enum nf_conntrack_attr type);
 
-extern u_int16_t nfct_get_attr_u16(const struct nf_conntrack *ct,
+extern uint16_t nfct_get_attr_u16(const struct nf_conntrack *ct,
 				   const enum nf_conntrack_attr type);
 
-extern u_int32_t nfct_get_attr_u32(const struct nf_conntrack *ct,
+extern uint32_t nfct_get_attr_u32(const struct nf_conntrack *ct,
 				   const enum nf_conntrack_attr type);
 
-extern u_int64_t nfct_get_attr_u64(const struct nf_conntrack *ct,
+extern uint64_t nfct_get_attr_u64(const struct nf_conntrack *ct,
 				   const enum nf_conntrack_attr type);
 
 /* checker */
@@ -480,20 +486,20 @@ extern struct nfct_filter *nfct_filter_create(void);
 extern void nfct_filter_destroy(struct nfct_filter *filter);
 
 struct nfct_filter_proto {
-	u_int16_t proto;
-	u_int16_t state;
+	uint16_t proto;
+	uint16_t state;
 };
 struct nfct_filter_ipv4 {
-	u_int32_t addr;
-	u_int32_t mask;
+	uint32_t addr;
+	uint32_t mask;
 };
 struct nfct_filter_ipv6 {
-	u_int32_t addr[4];
-	u_int32_t mask[4];
+	uint32_t addr[4];
+	uint32_t mask[4];
 };
 
 enum nfct_filter_attr {
-	NFCT_FILTER_L4PROTO = 0,	/* u_int32_t */
+	NFCT_FILTER_L4PROTO = 0,	/* uint32_t */
 	NFCT_FILTER_L4PROTO_STATE,	/* struct nfct_filter_proto */
 	NFCT_FILTER_SRC_IPV4,		/* struct nfct_filter_ipv4 */
 	NFCT_FILTER_DST_IPV4,		/* struct nfct_filter_ipv4 */
@@ -509,7 +515,7 @@ extern void nfct_filter_add_attr(struct nfct_filter *filter,
 
 extern void nfct_filter_add_attr_u32(struct nfct_filter *filter,
 				     const enum nfct_filter_attr attr,
-				     const u_int32_t value);
+				     const uint32_t value);
 
 enum nfct_filter_logic {
 	NFCT_FILTER_LOGIC_POSITIVE,
@@ -529,13 +535,13 @@ extern int nfct_filter_detach(int fd);
 struct nfct_filter_dump;
 
 struct nfct_filter_dump_mark {
-	u_int32_t val;
-	u_int32_t mask;
+	uint32_t val;
+	uint32_t mask;
 };
 
 enum nfct_filter_dump_attr {
 	NFCT_FILTER_DUMP_MARK = 0,	/* struct nfct_filter_dump_mark */
-	NFCT_FILTER_DUMP_L3NUM,		/* u_int8_t */
+	NFCT_FILTER_DUMP_L3NUM,		/* uint8_t */
 	NFCT_FILTER_DUMP_MAX
 };
 
@@ -549,7 +555,7 @@ void nfct_filter_dump_set_attr(struct nfct_filter_dump *filter_dump,
 
 void nfct_filter_dump_set_attr_u8(struct nfct_filter_dump *filter_dump,
 				  const enum nfct_filter_dump_attr type,
-				  u_int8_t data);
+				  uint8_t data);
 
 /* low level API: netlink functions */
 
@@ -557,8 +563,8 @@ extern __attribute__((deprecated)) int
 nfct_build_conntrack(struct nfnl_subsys_handle *ssh,
 				void *req,
 				size_t size,
-				u_int16_t type,
-				u_int16_t flags,
+				uint16_t type,
+				uint16_t flags,
 				const struct nf_conntrack *ct);
 
 extern __attribute__((deprecated))
@@ -644,27 +650,27 @@ extern void nfexp_set_attr(struct nf_expect *exp,
 
 extern void nfexp_set_attr_u8(struct nf_expect *exp,
 			      const enum nf_expect_attr type,
-			      u_int8_t value);
+			      uint8_t value);
 
 extern void nfexp_set_attr_u16(struct nf_expect *exp,
 			       const enum nf_expect_attr type,
-			       u_int16_t value);
+			       uint16_t value);
 
 extern void nfexp_set_attr_u32(struct nf_expect *exp,
 			       const enum nf_expect_attr type,
-			       u_int32_t value);
+			       uint32_t value);
 
 /* getter */
 extern const void *nfexp_get_attr(const struct nf_expect *exp,
 				  const enum nf_expect_attr type);
 
-extern u_int8_t nfexp_get_attr_u8(const struct nf_expect *exp,
+extern uint8_t nfexp_get_attr_u8(const struct nf_expect *exp,
 				  const enum nf_expect_attr type);
 
-extern u_int16_t nfexp_get_attr_u16(const struct nf_expect *exp,
+extern uint16_t nfexp_get_attr_u16(const struct nf_expect *exp,
 				    const enum nf_expect_attr type);
 
-extern u_int32_t nfexp_get_attr_u32(const struct nf_expect *exp,
+extern uint32_t nfexp_get_attr_u32(const struct nf_expect *exp,
 				    const enum nf_expect_attr type);
 
 /* checker */
@@ -704,8 +710,8 @@ extern __attribute__((deprecated))
 int nfexp_build_expect(struct nfnl_subsys_handle *ssh,
 			      void *req,
 			      size_t size,
-			      u_int16_t type,
-			      u_int16_t flags,
+			      uint16_t type,
+			      uint16_t flags,
 			      const struct nf_expect *exp);
 
 extern __attribute__((deprecated))
@@ -724,75 +730,6 @@ int nfexp_build_query(struct nfnl_subsys_handle *ssh,
 
 extern int nfexp_nlmsg_build(struct nlmsghdr *nlh, const struct nf_expect *exp);
 extern int nfexp_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_expect *exp);
-
-/* Bitset representing status of connection. Taken from ip_conntrack.h
- * 
- * Note: For backward compatibility this shouldn't ever change
- * 	 in kernel space.
- */
-enum ip_conntrack_status {
-	/* It's an expected connection: bit 0 set.  This bit never changed */
-	IPS_EXPECTED_BIT = 0,
-	IPS_EXPECTED = (1 << IPS_EXPECTED_BIT),
-
-	/* We've seen packets both ways: bit 1 set.  Can be set, not unset. */
-	IPS_SEEN_REPLY_BIT = 1,
-	IPS_SEEN_REPLY = (1 << IPS_SEEN_REPLY_BIT),
-
-	/* Conntrack should never be early-expired. */
-	IPS_ASSURED_BIT = 2,
-	IPS_ASSURED = (1 << IPS_ASSURED_BIT),
-
-	/* Connection is confirmed: originating packet has left box */
-	IPS_CONFIRMED_BIT = 3,
-	IPS_CONFIRMED = (1 << IPS_CONFIRMED_BIT),
-
-	/* Connection needs src nat in orig dir.  This bit never changed. */
-	IPS_SRC_NAT_BIT = 4,
-	IPS_SRC_NAT = (1 << IPS_SRC_NAT_BIT),
-
-	/* Connection needs dst nat in orig dir.  This bit never changed. */
-	IPS_DST_NAT_BIT = 5,
-	IPS_DST_NAT = (1 << IPS_DST_NAT_BIT),
-
-	/* Both together. */
-	IPS_NAT_MASK = (IPS_DST_NAT | IPS_SRC_NAT),
-
-	/* Connection needs TCP sequence adjusted. */
-	IPS_SEQ_ADJUST_BIT = 6,
-	IPS_SEQ_ADJUST = (1 << IPS_SEQ_ADJUST_BIT),
-
-	/* NAT initialization bits. */
-	IPS_SRC_NAT_DONE_BIT = 7,
-	IPS_SRC_NAT_DONE = (1 << IPS_SRC_NAT_DONE_BIT),
-
-	IPS_DST_NAT_DONE_BIT = 8,
-	IPS_DST_NAT_DONE = (1 << IPS_DST_NAT_DONE_BIT),
-
-	/* Both together */
-	IPS_NAT_DONE_MASK = (IPS_DST_NAT_DONE | IPS_SRC_NAT_DONE),
-
-	/* Connection is dying (removed from lists), can not be unset. */
-	IPS_DYING_BIT = 9,
-	IPS_DYING = (1 << IPS_DYING_BIT),
-
-	/* Connection has fixed timeout. */
-	IPS_FIXED_TIMEOUT_BIT = 10,
-	IPS_FIXED_TIMEOUT = (1 << IPS_FIXED_TIMEOUT_BIT),
-
-	/* Conntrack is a template */
-	IPS_TEMPLATE_BIT = 11,
-	IPS_TEMPLATE = (1 << IPS_TEMPLATE_BIT),
-
-	/* Conntrack is a fake untracked entry */
-	IPS_UNTRACKED_BIT = 12,
-	IPS_UNTRACKED = (1 << IPS_UNTRACKED_BIT),
-};
-
-/* expectation flags */
-#define NF_CT_EXPECT_PERMANENT          0x1
-#define NF_CT_EXPECT_INACTIVE           0x2
-#define NF_CT_EXPECT_USERSPACE          0x4
 
 /*
  * TCP flags
